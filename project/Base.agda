@@ -1,7 +1,7 @@
 {- najprej: vzem navadno logiko brez dodatnih dveh stvari iz vaj in sam spremen da ne gre v Bool ampak v KProp
 ker bom to rabla
 
-pol pa [| phi |] -> Bool/HProp za svoj [[ phi ]]_(W, U; L)  spremen, da bo slo v W -> HProp
+pol pa ⟦ ϕ ⟧ -> Bool/HProp za svoj ⟦ ϕ ⟧_(W, U, L)  spremen, da bo slo v W -> HProp
  -}
 
 module Base (AtomicFormula : Set) where 
@@ -25,5 +25,6 @@ Env = AtomicFormula → ℙ
 ⟦ φ ∧ ψ ⟧ η = ⟦ φ ⟧ η ∧ʰ ⟦ ψ ⟧ η
 ⟦ φ ∨ ψ ⟧ η = ⟦ φ ⟧ η ∨ʰ ⟦ ψ ⟧ η
 ⟦ φ ⇒ ψ ⟧ η = ⟦ φ ⟧ η ⇒ʰ ⟦ ψ ⟧ η
+⟦ □ ϕ⟧ η = ϕ
 
-{- todo: ⟦ □  ⟧   -}
+{- todo: ⟦ □ ⟧   -}

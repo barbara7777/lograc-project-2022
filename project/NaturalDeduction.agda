@@ -1,14 +1,3 @@
-------------------------------------------------------------------------------------
--- Solutions to Week 5 exercises for the Logika v računalništvu course at UL FMF  --
--- Part 1 (Natural deduction for intuitionistic propositional logic)              --
---                                                                                --
--- Lecturer: Andrej Bauer                                                         --
--- Teaching Assistant: Danel Ahman                                                --
---                                                                                --
--- Course website: https://ucilnica.fmf.uni-lj.si/course/view.php?id=252          --
--- Lecture notes: http://www.andrej.com/zapiski/ISRM-LOGRAC-2022/                 --
-------------------------------------------------------------------------------------
-
 {-
    Allowing overlapping instances for `∈` to use in `hyp`.
 
@@ -38,10 +27,16 @@ data Formula : Set where
   _∧_ : Formula → Formula → Formula       -- conjunction (unicode \wedge)
   _∨_ : Formula → Formula → Formula       -- disjunction (unicode \vee)
   _⇒_ : Formula → Formula → Formula       -- implication (unicode \=>)
+  □_ : Formula → Formula
+  
+
+
+
 
 infixr 6 _∧_
 infixr 5 _∨_
 infixr 4 _⇒_
+infix 9 □_
 
 {-
    Hypotheses are represented as a list of formulae.
@@ -275,3 +270,22 @@ cut-derivable d₁ d₂ = ⇒-elim (⇒-intro d₂) d₁
    action on derivations, and then use this action to apply suitable
    renamings to a derivation to recover the three structural rules.
 -}
+
+
+
+□-intro  : {Δ : Hypotheses}
+         → {φ : Formula}
+         → Δ ⊢ φ
+         -------------------
+         → Δ ⊢ □ φ
+
+
+□-intro d =  d
+         
+□-elim  : {Δ : Hypotheses}
+         → {φ : Formula}
+         → Δ ⊢ □ φ 
+         -------------------
+         → Δ ⊢ φ
+
+□-elim d = □-intro d
