@@ -27,16 +27,15 @@ data Formula : Set where
   _∧_ : Formula → Formula → Formula       -- conjunction (unicode \wedge)
   _∨_ : Formula → Formula → Formula       -- disjunction (unicode \vee)
   _⇒_ : Formula → Formula → Formula       -- implication (unicode \=>)
-  □_ : Formula → Formula
-  
-
+{-   □_ : Formula → Formula
+  ⋄_ : Formula → Formula  -}
 
 
 
 infixr 6 _∧_
 infixr 5 _∨_
 infixr 4 _⇒_
-infix 9 □_
+
 
 {-
    Hypotheses are represented as a list of formulae.
@@ -189,7 +188,10 @@ _⇔_ : Formula → Formula → Formula    -- unicode \<=>
 infix 7 ¬_
 infix 3 _⇔_
 
+□_ : Formula → Formula              -- unicode \square
+□ φ = φ 
 
+infixr 9 □_
 ----------------
 -- Exercise 1 --
 ----------------
@@ -272,20 +274,3 @@ cut-derivable d₁ d₂ = ⇒-elim (⇒-intro d₂) d₁
 -}
 
 
-
-□-intro  : {Δ : Hypotheses}
-         → {φ : Formula}
-         → Δ ⊢ φ
-         -------------------
-         → Δ ⊢ □ φ
-
-
-□-intro d =  d
-         
-□-elim  : {Δ : Hypotheses}
-         → {φ : Formula}
-         → Δ ⊢ □ φ 
-         -------------------
-         → Δ ⊢ φ
-
-□-elim d = □-intro d

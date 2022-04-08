@@ -7,24 +7,30 @@ pol pa ⟦ ϕ ⟧ -> Bool/HProp za svoj ⟦ ϕ ⟧_(W, U, L)  spremen, da bo slo
 module Base (AtomicFormula : Set) where 
 
 
+open import KripkeFrame
+module _ (Fr : KripkeFrame) where
+    open KripkeFrame Fr 
+
+    
+
 open import HProp
 open import NaturalDeduction AtomicFormula
 {- 
 open module ND = NaturalDeduction AtomicFormula
  -}
 
-ℙ = HProp
+
+ℙ = KripkeFrame.W Fr → HProp
 Env = AtomicFormula → ℙ
 
 {- [[_]] : Formula -> Env -> HProp -}
 
-⟦_⟧ : Formula → Env → ℙ
+⟦_⟧ : Formula → ℙ
 ⟦ ` P ⟧   η = η P
 ⟦ ⊤ ⟧     η = ⊤ʰ
 ⟦ ⊥ ⟧     η = ⊥ʰ
 ⟦ φ ∧ ψ ⟧ η = ⟦ φ ⟧ η ∧ʰ ⟦ ψ ⟧ η
 ⟦ φ ∨ ψ ⟧ η = ⟦ φ ⟧ η ∨ʰ ⟦ ψ ⟧ η
 ⟦ φ ⇒ ψ ⟧ η = ⟦ φ ⟧ η ⇒ʰ ⟦ ψ ⟧ η
-⟦ □ ϕ⟧ η = ϕ
 
-{- todo: ⟦ □ ⟧   -}
+
