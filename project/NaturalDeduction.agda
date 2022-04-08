@@ -27,15 +27,10 @@ data Formula : Set where
   _∧_ : Formula → Formula → Formula       -- conjunction (unicode \wedge)
   _∨_ : Formula → Formula → Formula       -- disjunction (unicode \vee)
   _⇒_ : Formula → Formula → Formula       -- implication (unicode \=>)
-{-   □_ : Formula → Formula
-  ⋄_ : Formula → Formula  -}
-
-
 
 infixr 6 _∧_
 infixr 5 _∨_
 infixr 4 _⇒_
-
 
 {-
    Hypotheses are represented as a list of formulae.
@@ -272,5 +267,3 @@ cut-derivable d₁ d₂ = ⇒-elim (⇒-intro d₂) d₁
    action on derivations, and then use this action to apply suitable
    renamings to a derivation to recover the three structural rules.
 -}
-
-
