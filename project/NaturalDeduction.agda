@@ -27,6 +27,7 @@ data Formula : Set where
   _∧_ : Formula → Formula → Formula       -- conjunction (unicode \wedge)
   _∨_ : Formula → Formula → Formula       -- disjunction (unicode \vee)
   _⇒_ : Formula → Formula → Formula       -- implication (unicode \=>)
+  □_ : Formula → Formula 
 
 infixr 6 _∧_
 infixr 5 _∨_
@@ -183,8 +184,8 @@ _⇔_ : Formula → Formula → Formula    -- unicode \<=>
 infix 7 ¬_
 infix 3 _⇔_
 
-□_ : Formula → Formula              -- unicode \square
-□ φ = φ 
+-- unicode \square
+-- □ φ = φ 
 
 infixr 9 □_
 ----------------

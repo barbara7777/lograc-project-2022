@@ -13,18 +13,17 @@ module Base (AtomicFormula : Set) where
   -}
 
   module _ (Fr : KripkeFrame) where
-    ℙ = KripkeFrame → HProp
-    Env = AtomicFormula → ℙ
-
-    {- [[_]] : Formula -> Env -> HProp -}
+    open KripkeFrame Fr
+    ℙ = W → HProp
 
     ⟦_⟧ : Formula → ℙ
-    ⟦ ` P ⟧   η = η P
-    ⟦ ⊤ ⟧     η = ⊤ʰ
-    ⟦ ⊥ ⟧     η = ⊥ʰ
-    ⟦ φ ∧ ψ ⟧ η = ⟦ φ ⟧ η ∧ʰ ⟦ ψ ⟧ η
-    ⟦ φ ∨ ψ ⟧ η = ⟦ φ ⟧ η ∨ʰ ⟦ ψ ⟧ η
-    ⟦ φ ⇒ ψ ⟧ η = ⟦ φ ⟧ η ⇒ʰ ⟦ ψ ⟧ η
-    -- ⟦ □ ϕ ⟧ η = ⟦ ϕ ⟧ η
+    ⟦ ` P ⟧   w = Val w P
+    ⟦ ⊤ ⟧     w = ⊤ʰ
+    ⟦ ⊥ ⟧     w = ⊥ʰ
+    ⟦ φ ∧ ψ ⟧ w = ⟦ φ ⟧ w ∧ʰ ⟦ ψ ⟧ w
+    ⟦ φ ∨ ψ ⟧ w = ⟦ φ ⟧ w ∨ʰ ⟦ ψ ⟧ w
+    ⟦ φ ⇒ ψ ⟧ w = ⟦ φ ⟧ w ⇒ʰ ⟦ ψ ⟧ w
+    ⟦ □ ϕ ⟧ w = ∀ʰ W (λ w' → (w ≤ₕ w') ⇒ʰ ⟦ ϕ ⟧ w')
+    -- ⟦ □ ϕ ⟧ w =  ∀ʰ W {! ? ≤ₖ ?!}
 
 
