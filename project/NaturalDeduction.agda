@@ -27,11 +27,14 @@ data Formula : Set where
   _∧_ : Formula → Formula → Formula       -- conjunction (unicode \wedge)
   _∨_ : Formula → Formula → Formula       -- disjunction (unicode \vee)
   _⇒_ : Formula → Formula → Formula       -- implication (unicode \=>)
-  □_ : Formula → Formula 
+  □_ : Formula → Formula  -- necessity (unicode \square)
+  ⋄_ : Formula → Formula  -- possibility (unicode \diamond)
 
 infixr 6 _∧_
 infixr 5 _∨_
 infixr 4 _⇒_
+infixr 3 □_
+infixr 3 ⋄_
 
 {-
    Hypotheses are represented as a list of formulae.
@@ -184,10 +187,6 @@ _⇔_ : Formula → Formula → Formula    -- unicode \<=>
 infix 7 ¬_
 infix 3 _⇔_
 
--- unicode \square
--- □ φ = φ 
-
-infixr 9 □_
 ----------------
 -- Exercise 1 --
 ----------------
