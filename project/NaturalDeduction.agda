@@ -173,6 +173,33 @@ data _⊢_ : (Δ : Hypotheses) → (φ : Formula) → Set where    -- unicode \v
            -------------------
            → Δ ⊢ ψ
 
+  -- square FIXME vprasaj, ali je to okej
+
+  □-intro : {Δ : Hypotheses}
+          → {ϕ : Formula}
+          → Δ ⊢ ϕ -- ϕ should be a theorem
+          -------------------
+          → Δ ⊢ □ ϕ
+
+  □-elim : {Δ : Hypotheses}
+          → {ϕ : Formula}
+          → Δ ⊢ □ ϕ
+          -------------------
+          → Δ ⊢ ϕ
+
+  □-double : {Δ : Hypotheses}
+          → {ϕ : Formula}
+          → Δ ⊢ □ ϕ
+          -------------------
+          → Δ ⊢ □ □ ϕ
+
+  □-dist : {Δ : Hypotheses}
+         → {ϕ ψ : Formula}
+         → Δ ⊢ □ (ϕ ⇒ ψ)
+         -------------------
+         → Δ ⊢ (□ ϕ) ⇒ (□ ψ)
+         
+
 {-
    We define negation and logical equivalence as syntactic sugar.
    These definitions are standard logical encodings of `¬` and `⇔`.
