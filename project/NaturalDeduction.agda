@@ -14,7 +14,10 @@
 
 module NaturalDeduction (AtomicFormula : Set) where
 
+open import Data.Fin   using (Fin; zero; suc)
+open import Data.Nat   using (ℕ; zero; suc; _+_; _≤_; z≤n; s≤s; _<_)
 open import Data.List  using (List; []; _∷_; [_]; _++_) public
+open import Data.Vec   using (Vec; []; _∷_)
 
 {-
    Formulae of propositional logic.
@@ -61,6 +64,19 @@ data _∈_ {A : Set} : A → List A → Set where
   instance
     ∈-here  : {x : A} → {xs : List A} → x ∈ (x ∷ xs)
     ∈-there : {x y : A} {xs : List A} → {{x ∈ xs}} → x ∈ (y ∷ xs)
+
+
+variable
+  A : Set
+  n : ℕ
+
+lookup : Vec A n → Fin n → A
+lookup (a ∷ as) zero = a
+lookup (a ∷ as) (suc i) = lookup as i
+
+box-map : Vec Formula n → List Formula
+box-map [] = []
+box-map (x ∷ xs) = (□ x) ∷ box-map xs
 
 {-
    Below is a natural deduction style proof calculus for **intuitionistic**
@@ -173,12 +189,15 @@ data _⊢_ : (Δ : Hypotheses) → (φ : Formula) → Set where    -- unicode \v
            -------------------
            → Δ ⊢ ψ
 
-  -- square FIXME vprasaj, ali je to okej
+  -- square
 
   □-intro : {Δ : Hypotheses}
           → {ϕ : Formula}
-          → Δ ⊢ ϕ -- ϕ should be a theorem
-          -------------------
+          → {n : ℕ}
+          → (As : Vec Formula n)
+          → ((i : Fin n) → Δ ⊢ □ lookup As i )
+          → box-map As ⊢ ϕ
+          ------------------
           → Δ ⊢ □ ϕ
 
   □-elim : {Δ : Hypotheses}
@@ -187,18 +206,23 @@ data _⊢_ : (Δ : Hypotheses) → (φ : Formula) → Set where    -- unicode \v
           -------------------
           → Δ ⊢ ϕ
 
-  □-double : {Δ : Hypotheses}
-          → {ϕ : Formula}
-          → Δ ⊢ □ ϕ
-          -------------------
-          → Δ ⊢ □ □ ϕ
+  -- diamond
 
-  □-dist : {Δ : Hypotheses}
+  ⋄-intro : {Δ : Hypotheses}
+          → {ϕ : Formula}
+          → Δ ⊢ ϕ
+          -------------------
+          → Δ ⊢ ⋄ ϕ
+
+  ⋄-elim : {Δ : Hypotheses}
          → {ϕ ψ : Formula}
-         → Δ ⊢ □ (ϕ ⇒ ψ)
-         -------------------
-         → Δ ⊢ (□ ϕ) ⇒ (□ ψ)
-         
+         → {n : ℕ}
+         → (As : Vec Formula n)
+         → ((i : Fin n) → Δ ⊢ □ lookup As i )
+         → Δ ⊢ ⋄ ϕ
+         → (box-map As) ++  [ ϕ ] ⊢ ⋄ ψ
+         ------------------
+         → Δ ⊢ ⋄ ψ
 
 {-
    We define negation and logical equivalence as syntactic sugar.
