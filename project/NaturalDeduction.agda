@@ -65,16 +65,11 @@ data _∈_ {A : Set} : A → List A → Set where
     ∈-here  : {x : A} → {xs : List A} → x ∈ (x ∷ xs)
     ∈-there : {x y : A} {xs : List A} → {{x ∈ xs}} → x ∈ (y ∷ xs)
 
-
-variable
-  A : Set
-  n : ℕ
-
-lookup : Vec A n → Fin n → A
+lookup : {n : ℕ} → {A : Set} → Vec A n → Fin n → A
 lookup (a ∷ as) zero = a
 lookup (a ∷ as) (suc i) = lookup as i
 
-box-map : Vec Formula n → List Formula
+box-map : {n : ℕ} → Vec Formula n → List Formula
 box-map [] = []
 box-map (x ∷ xs) = (□ x) ∷ box-map xs
 
