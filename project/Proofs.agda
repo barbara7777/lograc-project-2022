@@ -1,3 +1,5 @@
+{-# OPTIONS --overlapping-instances #-}
+
 module Proofs (AtomicFormula : Set) where
   import NaturalDeduction
   open module ND = NaturalDeduction AtomicFormula
