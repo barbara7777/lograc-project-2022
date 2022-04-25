@@ -1,8 +1,9 @@
 module Proofs (AtomicFormula : Set) where
-  open import NaturalDeduction AtomicFormula
+  import NaturalDeduction
+  open module ND = NaturalDeduction AtomicFormula
 
-  □□-to-□ : (f : Formula) →  [ □ □ f ]  ⊢ □ f -- a je to sploh prav, bi moralo biti obrnjeno? to je itak samo elimination
-  □□-to-□ f = {!□-elim (hyp (□ □ f))!} -- No instance of type (□ □ f) ∈ [ □ □ f ] was found in scope. Wat?
+  □□-to-□ : (A : Formula) →  (□ □ A) ∷ []  ⊢ □ A -- a je to sploh prav, bi moralo biti obrnjeno? to je itak samo elimination
+  □□-to-□ A = □-elim (hyp (□ □ A)) -- No instance of type (□ □ f) ∈ [ □ □ f ] was found in scope. Wat?
 
-  □-dist : (a b : Formula) → [ □ (a ⇒ b) ] ⊢ (□ a) ⇒ (□ b) --\vdash
-  □-dist a b = {!!} 
+  □-dist : (A B : Formula) → [ □ (A ⇒ B) ] ⊢ (□ A) ⇒ (□ B) --\vdash
+  □-dist A B = {!!} 
