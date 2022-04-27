@@ -3,9 +3,21 @@
 module Proofs (AtomicFormula : Set) where
   import NaturalDeduction
   open module ND = NaturalDeduction AtomicFormula
+  open import Data.Vec   using (Vec; []; _∷_)
+  open import Data.Fin   using (Fin; zero; suc)
 
-  □□-to-□ : (A : Formula) →  (□ □ A) ∷ []  ⊢ □ A -- a je to sploh prav, bi moralo biti obrnjeno? to je itak samo elimination
-  □□-to-□ A = □-elim (hyp (□ □ A)) -- No instance of type (□ □ f) ∈ [ □ □ f ] was found in scope. Wat?
 
   □-dist : (A B : Formula) → [ □ (A ⇒ B) ] ⊢ (□ A) ⇒ (□ B) --\vdash
-  □-dist A B = {!!} 
+  □-dist A B = {!!}
+
+  □-elim-proof : (A : Formula) →  [ □ A ]  ⊢ A 
+  □-elim-proof A = □-elim (hyp (□ A))
+
+  □-to-□□ : (A : Formula) →  [ □ A ]  ⊢ □ □ A 
+  □-to-□□ A = □-intro (A ∷ []) (λ x → {!!}) (hyp (□ A))
+
+  □-⋄-rel : (A B : Formula) → [ □ ( A ⇒ (⋄ B)) ] ⊢ (⋄ A) ⇒ (⋄ B)
+  □-⋄-rel A B = {!!}
+
+  ⋄-intro-proof : (A : Formula) → [ A ] ⊢ (⋄ A)
+  ⋄-intro-proof A = ⋄-intro (hyp A)
