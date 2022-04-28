@@ -14,7 +14,10 @@ module Proofs (AtomicFormula : Set) where
   □-elim-proof A = □-elim (hyp (□ A))
 
   □-to-□□ : (A : Formula) →  [ □ A ]  ⊢ □ □ A 
-  □-to-□□ A = □-intro (A ∷ []) (λ x → {!!}) (hyp (□ A))
+  □-to-□□ A = □-intro (A ∷ []) aux  (hyp (□ A))
+    where
+      aux : (i : Fin 1) → [ □ A ] ⊢ □ lookup (A ∷ []) i
+      aux zero = hyp (□ A)
 
   □-⋄-rel : (A B : Formula) → [ □ ( A ⇒ (⋄ B)) ] ⊢ (⋄ A) ⇒ (⋄ B)
   □-⋄-rel A B = {!!}
