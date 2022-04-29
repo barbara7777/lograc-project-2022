@@ -36,8 +36,8 @@ data Formula : Set where
 infixr 6 _∧_
 infixr 5 _∨_
 infixr 4 _⇒_
-infixr 3 □_
-infixr 3 ⋄_
+infixr 7 □_
+infixr 7 ⋄_
 
 {-
    Hypotheses are represented as a list of formulae.
