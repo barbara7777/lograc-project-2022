@@ -21,7 +21,7 @@ module Proofs (AtomicFormula : Set) where
 
   □-⋄-rel : (A B : Formula) → [ □ ( A ⇒ ⋄ B) ] ⊢ ⋄ A ⇒ ⋄ B
   -- □-⋄-rel A B = ⇒-intro (weaken (⋄ A) (⇒-elim (□-elim (hyp ( □ ( A ⇒ ⋄ B)))) (hyp A)))
-  □-⋄-rel A B = {!⇒-elim (hyp ( □ ( A ⇒ ⋄ B))) (hyp A)!}
+  □-⋄-rel A B = {!⋄-elim (aux₁ A B)!}
     where
       aux₁ :  (C D : Formula) → [ □ ( C ⇒ ⋄ D) ] ++ [ C ] ⊢ ⋄ D
       aux₁ C D = ⇒-elim (□-elim (hyp ( □ ( C ⇒ ⋄ D)))) (hyp C)
@@ -29,6 +29,7 @@ module Proofs (AtomicFormula : Set) where
   -- (hyp ( □ ( A ⇒ (⋄ B))) -- [ □ ( A ⇒ (⋄ B)) ] ⊢ □ ( A ⇒ (⋄ B))
   -- □-elim [ □ ( A ⇒ (⋄ B)) ] ⊢ A ⇒ (⋄ B)
   -- ⇒-elim
+  
   -- ⇒-intro
 
   ⋄-intro-proof : (A : Formula) → [ A ] ⊢ ⋄ A
