@@ -6,7 +6,6 @@ module Base (AtomicFormula : Set) where
   open module ND = NaturalDeduction AtomicFormula
   -}
 
-
   import Relation.Binary.PropositionalEquality as Eq
   open Eq renaming ([_] to [|_|])
   open Eq.≡-Reasoning

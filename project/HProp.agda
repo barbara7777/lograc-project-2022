@@ -9,8 +9,12 @@ open import Data.Unit
 
 open import Relation.Binary.PropositionalEquality using (_≡_; refl)
 
-open import Axiom.Extensionality.Propositional using (Extensionality)
-postulate fun-ext : ∀ {a b} → Extensionality a b
+import Relation.Binary.PropositionalEquality as Eq
+open Eq renaming ([_] to [|_|])
+open Eq.≡-Reasoning
+
+open import Axiom.Extensionality.Propositional renaming (Extensionality to Extensionality-axiom)
+postulate fun-ext : ∀ {a b} → Extensionality-axiom a b
 
 -- Propositions are (Set₀) types with at most one inhabitant
  
@@ -65,6 +69,16 @@ _∧ʰ_ : HProp → HProp → HProp
     θ : (x y : p × q) → x ≡ y
     θ (x₁ , y₁) (x₂ , y₂) with ξ x₁ x₂ | ζ y₁ y₂
     ... | refl | refl = refl
+
+⊤ʰ-∧ʰ-elim : (A : HProp) → ⊤ʰ ∧ʰ A ≡ A
+⊤ʰ-∧ʰ-elim ⟨ a , α ⟩  =
+  begin
+    ⊤ʰ ∧ʰ ⟨ a , α ⟩
+    ≡⟨ {!!} ⟩
+    ⟨ ⊤ × a , {!!} ⟩
+    ≡⟨ {!!} ⟩
+    ⟨ a , α ⟩
+  ∎
 
 -- disjunction
 
