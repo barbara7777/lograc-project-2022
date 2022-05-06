@@ -97,14 +97,38 @@ _⇒ʰ_ : HProp → HProp → HProp
 ∀ʰ A ϕ = ⟨ (∀ x → proof (ϕ x)) , (λ f g → fun-ext (λ x → is-prop (ϕ x) (f x) (g x))) ⟩
 
 -- proofs
+--truth
 ⊤ʰ-intro : proof ⊤ʰ
 ⊤ʰ-intro = tt
 
-⊥ʰ-elim : (A : HProp) → proof ⊥ʰ → proof A
-⊥ʰ-elim A ()
+-- falsehood
+⊥ʰ-elim : {A : HProp} → proof ⊥ʰ → proof A
+⊥ʰ-elim ()
 
-∨ʰ-intro₁ : {A : HProp} {B : HProp} → proof A → proof (A ∨ʰ B)
+-- conjunction
+∧ʰ-intro : {A B : HProp} → proof A → proof B → proof (A ∧ʰ B)
+∧ʰ-intro pa pb = pa , pb
+
+∧ʰ-elim₁ : {A B : HProp} → proof (A ∧ʰ B) → proof A
+∧ʰ-elim₁ p = proj₁ p
+
+∧ʰ-elim₂ : {A B : HProp} → proof (A ∧ʰ B) → proof B
+∧ʰ-elim₂ p = proj₂ p
+
+-- disjunction (not sure for the last one)
+∨ʰ-intro₁ : {A B : HProp} → proof A → proof (A ∨ʰ B)
 ∨ʰ-intro₁ p = ∣ inj₁ p ∣
+
+∨ʰ-intro₂ : {A B : HProp} → proof B → proof (A ∨ʰ B)
+∨ʰ-intro₂ p =  ∣ inj₂ p ∣
+
+∨ʰ-elim₁ : {A B C : HProp} → proof (A ∨ʰ B) → proof (A ⇒ʰ C) → proof (B ⇒ʰ C) → proof C
+∨ʰ-elim₁ por pac pbc = {!!}
+
+-- implication (not sure)
+⇒ʰ-intro : {A B : HProp} → proof A → proof (A ⇒ʰ B)
+⇒ʰ-intro A = {!!}
+
 
 ∃ʰ-elim : {m : Level} {A : Set} (ϕ : A → HProp) (ψ : HProp) →
                ((x : A) → proof (ϕ x) → proof ψ) → proof (∃ʰ A ϕ) → proof ψ
