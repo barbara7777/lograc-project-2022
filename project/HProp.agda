@@ -70,16 +70,6 @@ _∧ʰ_ : HProp → HProp → HProp
     θ (x₁ , y₁) (x₂ , y₂) with ξ x₁ x₂ | ζ y₁ y₂
     ... | refl | refl = refl
 
-⊤ʰ-∧ʰ-elim : (A : HProp) → ⊤ʰ ∧ʰ A ≡ A
-⊤ʰ-∧ʰ-elim ⟨ a , α ⟩  =
-  begin
-    ⊤ʰ ∧ʰ ⟨ a , α ⟩
-    ≡⟨ {!!} ⟩
-    ⟨ ⊤ × a , {!!} ⟩
-    ≡⟨ {!!} ⟩
-    ⟨ a , α ⟩
-  ∎
-
 -- disjunction
 
 _∨ʰ_ : HProp → HProp → HProp
@@ -105,3 +95,17 @@ _⇒ʰ_ : HProp → HProp → HProp
 
 ∀ʰ : (A : Set) → (A → HProp) → HProp
 ∀ʰ A ϕ = ⟨ (∀ x → proof (ϕ x)) , (λ f g → fun-ext (λ x → is-prop (ϕ x) (f x) (g x))) ⟩
+
+-- proofs
+⊤ʰ-intro : proof ⊤ʰ
+⊤ʰ-intro = tt
+
+⊥ʰ-elim : (A : HProp) → proof ⊥ʰ → proof A
+⊥ʰ-elim A ()
+
+∨ʰ-intro₁ : {A : HProp} {B : HProp} → proof A → proof (A ∨ʰ B)
+∨ʰ-intro₁ p = ∣ inj₁ p ∣
+
+∃ʰ-elim : {m : Level} {A : Set} (ϕ : A → HProp) (ψ : HProp) →
+               ((x : A) → proof (ϕ x) → proof ψ) → proof (∃ʰ A ϕ) → proof ψ
+∃ʰ-elim ϕ ψ f p = ∥∥-elim (is-prop ψ) (λ { (x , q) → f x q }) p

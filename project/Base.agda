@@ -25,17 +25,34 @@ module Base (AtomicFormula : Set) where
     ⟦ ⋄ ϕ ⟧ w = ∃ʰ W (λ w' → (w ≤ₕ w') ∧ʰ ⟦ ϕ ⟧ w')
 
     ⟦_⟧ₑ : Hypotheses  → ℙ             -- unicode \[[ \]] \_e
-    ⟦ [] ⟧ₑ    w = ⊥ʰ 
-    ⟦ φ ∷ Δ ⟧ₑ η = ⟦ φ ⟧ η ∧ʰ ⟦ Δ ⟧ₑ η
+    ⟦ [] ⟧ₑ    w = ⊤ʰ 
+    ⟦ φ ∷ Δ ⟧ₑ w = ⟦ φ ⟧ w ∧ʰ ⟦ Δ ⟧ₑ w
 
-    ⟦⟧ₑ-++ : (Δ₁ Δ₂ : Hypotheses) {η : W}
-       → ⟦ Δ₁ ++ Δ₂ ⟧ₑ η ≡ ⟦ Δ₁ ⟧ₑ η ∧ʰ ⟦ Δ₂ ⟧ₑ η
+    -- soundness
 
-    ⟦⟧ₑ-++ [] Δ₂ {η} =
-      begin
-       ⟦ [] ++ Δ₂ ⟧ₑ η
-       ≡⟨ cong {!⊥ʰ ∧ʰ_!}  refl ⟩ -- tu mislim da je problem, da se ⊥ʰ ∧ʰ_ ne pokrajsa v HProp, morava dokazati?
-       ⟦ [] ⟧ₑ η ∧ʰ ⟦ Δ₂ ⟧ₑ η
-      ∎
-      
-    ⟦⟧ₑ-++ (φ ∷ Δ₁) Δ₂ {η} = {!!}
+    soundness : {Δ : Hypotheses}
+          → {φ : Formula}
+          → Δ ⊢ φ
+          → {w : W}
+          → proof (⟦ Δ ⟧ₑ w)
+          → proof (⟦ φ ⟧ w)
+
+    soundness (weaken φ p) = {!soundness p!}
+    soundness (contract φ p) = {!!}
+    soundness (exchange φ₁ φ₂ p) = {!!}
+    soundness (hyp _) = {!!}
+    soundness ⊤-intro = λ _ → ⊤ʰ-intro
+
+    soundness (⊥-elim p) = {!!}
+    soundness (∧-intro p p₁) = {!!}
+    soundness (∧-elim₁ p) = {!!}
+    soundness (∧-elim₂ p) = {!!}
+    soundness (∨-intro₁ p) = {!!}
+    soundness (∨-intro₂ p) = {!!}
+    soundness (∨-elim p p₁ p₂) = {!!}
+    soundness (⇒-intro p) = {!!}
+    soundness (⇒-elim p p₁) = {!!}
+    soundness (□-intro As x p) = {!!}
+    soundness (□-elim p) = {!!}
+    soundness (⋄-intro p) = {!!}
+    soundness (⋄-elim As x p p₁) = {!!}
