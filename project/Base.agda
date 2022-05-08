@@ -40,7 +40,10 @@ module Base (AtomicFormula : Set) where
     soundness (weaken φ p) = {!soundness p!}
     soundness (contract φ p) = {!!}
     soundness (exchange φ₁ φ₂ p) = {!!}
-    soundness (hyp _) = {!!}
+
+    soundness (hyp {φ ∷ Δ} φ {{ ∈-here }}) = ∧ʰ-elim₁
+    soundness (hyp {ψ ∷ Δ} ϕ {{ (∈-there {{ p }}) }}) = λ x → soundness (hyp ϕ {{ p }}) (∧ʰ-elim₂ x)
+
     soundness ⊤-intro = λ _ → ⊤ʰ-intro
 
     soundness (⊥-elim p) = {!!}
@@ -54,5 +57,9 @@ module Base (AtomicFormula : Set) where
     soundness (⇒-elim p p₁) = {!!}
     soundness (□-intro As x p) = {!!}
     soundness (□-elim p) = {!!}
-    soundness (⋄-intro p) = {!!}
+    soundness (⋄-intro p) = aux p
+      where
+        aux : {Δ : Hypotheses} → {w : W} → {ϕ : Formula} → Δ ⊢ ϕ → proof (⟦ Δ ⟧ₑ w)
+                   → proof (∃ʰ W (λ w' → (w ≤ₕ w') ∧ʰ ⟦ ϕ ⟧ w'))
+        aux p x = {!!}
     soundness (⋄-elim As x p p₁) = {!!}
