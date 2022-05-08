@@ -122,14 +122,19 @@ _⇒ʰ_ : HProp → HProp → HProp
 ∨ʰ-intro₂ : {A B : HProp} → proof B → proof (A ∨ʰ B)
 ∨ʰ-intro₂ p =  ∣ inj₂ p ∣
 
-∨ʰ-elim₁ : {A B C : HProp} → proof (A ∨ʰ B) → proof (A ⇒ʰ C) → proof (B ⇒ʰ C) → proof C
-∨ʰ-elim₁ por pac pbc = {!!}
+{-
+∨ʰ-elim : {A B C : HProp} → proof (A ∨ʰ B) → proof (A ⇒ʰ C) → proof (B ⇒ʰ C) → proof C
+∨ʰ-elim por pac pbc = {!!}
 
 -- implication (not sure)
 ⇒ʰ-intro : {A B : HProp} → proof A → proof (A ⇒ʰ B)
 ⇒ʰ-intro A = {!!}
 
+⇒ʰ-elim : {A B : HProp} → proof A → proof (A ⇒ʰ B) → proof B
+⇒ʰ-elim A AB = {!!}
+-}
 
+-- other
 ∃ʰ-elim : {m : Level} {A : Set} (ϕ : A → HProp) (ψ : HProp) →
                ((x : A) → proof (ϕ x) → proof ψ) → proof (∃ʰ A ϕ) → proof ψ
 ∃ʰ-elim ϕ ψ f p = ∥∥-elim (is-prop ψ) (λ { (x , q) → f x q }) p
