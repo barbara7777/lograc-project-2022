@@ -28,6 +28,13 @@ module Base (AtomicFormula : Set) where
     ⟦ [] ⟧ₑ    w = ⊤ʰ 
     ⟦ φ ∷ Δ ⟧ₑ w = ⟦ φ ⟧ w ∧ʰ ⟦ Δ ⟧ₑ w
 
+    -- helpers
+    
+    ⟦⟧ₑ-++ : (Δ₁ Δ₂ : Hypotheses) {w : W}
+       → proof (⟦ Δ₁ ++ Δ₂ ⟧ₑ w) → proof (⟦ Δ₁ ⟧ₑ w ∧ʰ ⟦ Δ₂ ⟧ₑ w)
+    ⟦⟧ₑ-++ [] Δ₂ = λ p → ∧ʰ-intro ⊤ʰ-intro p
+    ⟦⟧ₑ-++ (x ∷ Δ₁) Δ₂ = {!λ p → ∧ʰ-intro (∧ʰ-elim₁ p) ( ⟦⟧ₑ-++ Δ₁ Δ₂ (∧ʰ-elim₂ p))!}
+    
     -- soundness
 
     soundness : {Δ : Hypotheses}
@@ -38,7 +45,10 @@ module Base (AtomicFormula : Set) where
           → proof (⟦ φ ⟧ w)
 
     soundness (weaken φ p) = {!soundness p!}
-    soundness (contract φ p) = {!!}
+    soundness (contract {Δ₁} {Δ₂} φ {ψ} d) = {!soundness d!}
+      where
+        aux :{Δ₁ Δ₂ : Hypotheses} {w : W} {ϕ : Formula} → proof (⟦ Δ₁ ++ φ ∷ φ ∷ Δ₂ ⟧ₑ w) → proof (⟦ Δ₁ ⟧ₑ w ∧ʰ ⟦ φ ∷ Δ₂ ⟧ₑ w)
+        aux {Δ₁} {Δ₂} p = {! ⟦⟧ₑ-++ !}
     soundness (exchange φ₁ φ₂ p) = {!!}
 
     soundness (hyp {φ ∷ Δ} φ {{ ∈-here }}) = ∧ʰ-elim₁
