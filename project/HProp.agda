@@ -122,17 +122,17 @@ _⇒ʰ_ : HProp → HProp → HProp
 ∨ʰ-intro₂ : {A B : HProp} → proof B → proof (A ∨ʰ B)
 ∨ʰ-intro₂ p =  ∣ inj₂ p ∣
 
-{-
+
 ∨ʰ-elim : {A B C : HProp} → proof (A ∨ʰ B) → proof (A ⇒ʰ C) → proof (B ⇒ʰ C) → proof C
 ∨ʰ-elim por pac pbc = {!!}
 
 -- implication (not sure)
 ⇒ʰ-intro : {A B : HProp} → proof A → proof (A ⇒ʰ B)
-⇒ʰ-intro A = {!!}
+⇒ʰ-intro {A} {B} pa = λ x → {!HProp.proof!}
 
 ⇒ʰ-elim : {A B : HProp} → proof A → proof (A ⇒ʰ B) → proof B
 ⇒ʰ-elim A AB = {!!}
--}
+
 
 -- other
 ∃ʰ-elim : {m : Level} {A : Set} (ϕ : A → HProp) (ψ : HProp) →
