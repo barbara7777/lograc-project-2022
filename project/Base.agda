@@ -56,12 +56,12 @@ module Base (AtomicFormula : Set) where
 
     soundness ⊤-intro = λ _ → ⊤ʰ-intro
 
-    soundness (⊥-elim p) = {!!}
-    soundness (∧-intro p p₁) = {!!}
-    soundness (∧-elim₁ p) = {!!}
-    soundness (∧-elim₂ p) = {!!}
-    soundness (∨-intro₁ p) = {!!}
-    soundness (∨-intro₂ p) = {!!}
+    soundness (⊥-elim p) = λ x → ⊥ʰ-elim (soundness p x)
+    soundness (∧-intro p p₁) = λ x → ∧ʰ-intro (soundness p x) (soundness p₁ x)
+    soundness (∧-elim₁ p) = λ x → ∧ʰ-elim₁ (soundness p x)
+    soundness (∧-elim₂ p) = λ x → ∧ʰ-elim₂ (soundness p x)
+    soundness (∨-intro₁ p) = λ x → ∨ʰ-intro₁ (soundness p x)
+    soundness (∨-intro₂ p) = λ x → ∨ʰ-intro₂ (soundness p x)
     soundness (∨-elim p p₁ p₂) = {!!}
     soundness (⇒-intro p) = {!!}
     soundness (⇒-elim p p₁) = {!!}
