@@ -130,13 +130,13 @@ abstract
   ∨ʰ-elim por pac pbc = {!!}
   -}
 
-  -- implication (not sure)
+   -- implication (not sure)
   ⇒ʰ-intro : {A B : HProp} → proof A → proof (A ⇒ʰ B)
-  ⇒ʰ-intro p ={! proof (λ x → (p → x))  !}
+  ⇒ʰ-intro {A} p = λ B → {! (A → B) !} -- {! λ B → proof (A -> B)  !}
 
-  {- ⇒ʰ-elim : {A B : HProp} → proof A → proof (A ⇒ʰ B) → proof B
-  ⇒ʰ-elim A AB = {!!}
-  -}
+  ⇒ʰ-elim : {A B : HProp} → proof A → proof (A ⇒ʰ B) → proof B
+  ⇒ʰ-elim {B} A AB = ∥∥-elim (is-prop B) (λ z → z A) ∣ AB ∣   {- not right yet -}
+ 
   
   -- other
   ∃ʰ-elim : {m : Level} {A : Set} (ϕ : A → HProp) (ψ : HProp) →
