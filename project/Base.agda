@@ -39,12 +39,13 @@ module Base (AtomicFormula : Set) where
 
     soundness : {Δ : Hypotheses}
           → {φ : Formula}
-          → Δ ⊢ φ
-          → {w : W}
-          → proof (⟦ Δ ⟧ₑ w)
-          → proof (⟦ φ ⟧ w)
+          → Δ ⊢ φ  -- dokaz, da iz hipotez sledi formula
+          → {w : W}  -- za vsak svet
+          → proof (⟦ Δ ⟧ₑ w)  -- ce vse hipoteze veljajo v w
+          → proof (⟦ φ ⟧ w)  -- potem formula velja v svetu w
 
     soundness (weaken φ p) = {!soundness p!}
+    
     soundness (contract {Δ₁} {Δ₂} φ {ψ} d) = {!soundness d!}
       where
         aux :{Δ₁ Δ₂ : Hypotheses} {w : W} {ϕ : Formula} → proof (⟦ Δ₁ ++ φ ∷ φ ∷ Δ₂ ⟧ₑ w) → proof (⟦ Δ₁ ⟧ₑ w ∧ʰ ⟦ φ ∷ Δ₂ ⟧ₑ w)
