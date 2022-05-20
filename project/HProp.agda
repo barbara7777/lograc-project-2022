@@ -117,29 +117,29 @@ abstract
   ∧ʰ-elim₂ : {A B : HProp} → proof (A ∧ʰ B) → proof B
   ∧ʰ-elim₂ p = proj₂ p
 
-  -- disjunction (not sure for the last one)
+  -- disjunction 
   ∨ʰ-intro₁ : {A B : HProp} → proof A → proof (A ∨ʰ B)
   ∨ʰ-intro₁ p = ∣ inj₁ p ∣
 
   ∨ʰ-intro₂ : {A B : HProp} → proof B → proof (A ∨ʰ B)
   ∨ʰ-intro₂ p =  ∣ inj₂ p ∣
 
-  {-
-  ∨ʰ-elim : {A B C : HProp} → 
-  proof (A ∨ʰ B) → proof (A ⇒ʰ C) → proof (B ⇒ʰ C) → proof C
-  ∨ʰ-elim por pac pbc = {!!}
-  -}
-
-   -- implication (not sure)
-  ⇒ʰ-intro : {A B : HProp} → proof A → proof (A ⇒ʰ B)
-  ⇒ʰ-intro {A} p = λ B → {! (A → B) !} -- {! λ B → proof (A -> B)  !}
+  ∨ʰ-elim : {A B C : HProp} → proof (A ∨ʰ B) → proof (A ⇒ʰ C) → proof (B ⇒ʰ C) → proof C
+  ∨ʰ-elim {A} {B} {C} por pac pbc = ∥∥-elim (is-prop C) [ pac , pbc ] por 
+  -- to cist na desni v oglatih oklepajih je sam pattern matching iz standardne knjiznice
+  
+  -- implication
+  ⇒ʰ-intro : {A B : HProp} → (proof A → proof B) → proof (A ⇒ʰ B)
+  ⇒ʰ-intro {A} p = p 
 
   ⇒ʰ-elim : {A B : HProp} → proof A → proof (A ⇒ʰ B) → proof B
-  ⇒ʰ-elim {B} A AB = ∥∥-elim (is-prop B) (λ z → z A) ∣ AB ∣   {- not right yet -}
- 
+  ⇒ʰ-elim {B} p q = q p  
   
+
   -- other
   ∃ʰ-elim : {m : Level} {A : Set} (ϕ : A → HProp) (ψ : HProp) →
                 ((x : A) → proof (ϕ x) → proof ψ) → proof (∃ʰ A ϕ) → proof ψ
   ∃ʰ-elim ϕ ψ f p = ∥∥-elim (is-prop ψ) (λ { (x , q) → f x q }) p
+
+  
  
