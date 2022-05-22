@@ -26,7 +26,7 @@ module Base (AtomicFormula : Set) where
 
     ⟦_⟧ₑ : Hypotheses  → ℙ             -- unicode \[[ \]] \_e
     ⟦ [] ⟧ₑ    w = ⊤ʰ 
-    ⟦ φ ∷ Δ ⟧ₑ w = ⟦ φ ⟧ w ∧ʰ ⟦ Δ ⟧ₑ w
+    ⟦ φ ∷ Δ ⟧ₑ w = ⟦ φ ⟧ w ∧ʰ ⟦ Δ ⟧ₑ w   
 
     -- helpers
     
@@ -34,6 +34,22 @@ module Base (AtomicFormula : Set) where
        → proof (⟦ Δ₁ ++ Δ₂ ⟧ₑ w) → proof (⟦ Δ₁ ⟧ₑ w ∧ʰ ⟦ Δ₂ ⟧ₑ w)
     ⟦⟧ₑ-++ [] Δ₂ = λ p → ∧ʰ-intro ⊤ʰ-intro p
     ⟦⟧ₑ-++ (x ∷ Δ₁) Δ₂ = {!λ p → ∧ʰ-intro (∧ʰ-elim₁ p) ( ⟦⟧ₑ-++ Δ₁ Δ₂ (∧ʰ-elim₂ p))!}
+
+    and-concat : {Δ : Hypotheses}
+          → {ϕ : Formula}
+          → {w : W}
+          → proof (⟦ Δ ⟧ₑ w ∧ʰ ⟦ ϕ ⟧ w) → proof (⟦ Δ ++ [ ϕ ] ⟧ₑ w)
+    and-concat p = {!!}
+
+    exchange-hyp : {Δ : Hypotheses} {ϕ : Formula} {w : W} → proof (⟦ Δ ++ [ ϕ ] ⟧ₑ w) → proof (⟦ [ ϕ ] ++  Δ ⟧ₑ w)
+    exchange-hyp p = {!!}
+
+    test : {A B : HProp} → proof A → (proof A → proof B) → proof B
+    test p f = ?
+
+    ∀ʰ-elim : {Δ : Hypotheses} {w : W} {ϕ : Formula} →
+          proof (∀ʰ W (λ w' → (w ≤ₕ w') ⇒ʰ ⟦ ϕ ⟧ w')) → proof (⟦ ϕ ⟧ w)
+    ∀ʰ-elim {Δ} {w} {ϕ} p = {!∀ʰ W (λ w' → (w ≤ₕ w') ⇒ʰ ⟦ ϕ ⟧ w')!}
     
     -- soundness
 
@@ -64,17 +80,13 @@ module Base (AtomicFormula : Set) where
     soundness (∨-intro₁ p) = λ x → ∨ʰ-intro₁ (soundness p x)
     soundness (∨-intro₂ p) = λ x → ∨ʰ-intro₂ (soundness p x)
     soundness (∨-elim p p₁ p₂) = λ x → {!   !} --  (soundness p x) {!   !} (soundness p₁ ?) -- ∨ʰ-elim (soundness p x) (soundness p₁ x) (soundness p₂ x ) 
-    soundness (⇒-intro p) δ = ⇒ʰ-intro λ q → soundness p {! aux p
+    soundness (⇒-intro p) δ = ⇒ʰ-intro λ q → soundness p (aux q)
       where
-      -- tuki je potrebno zdruziti vse skupi
-      -- profesor je rekel, naj nardima dokaz, ce mamo nek x in nek y, mamo funkcijo v x ++ [y].
-      -- pac v smislu, da je [x ++ [y]] enako [x, y]
-      -- concatenation je definiran rekurzivno na prvi element, midva mama pa zdej obraten primer
-        aux : {!   !}
-        aux = {!   !}  !}  
+        aux : {Δ : Hypotheses} {φ : Formula} {w : W} → proof (⟦ φ ⟧ w) → proof (⟦ Δ ++ [ φ ] ⟧ₑ w)
+        aux q = and-concat (∧ʰ-intro δ q)
     soundness (⇒-elim p p₁) = λ x → ⇒ʰ-elim (soundness p₁ x) (soundness p x)
     soundness (□-intro As x p) = {!!}
-    soundness (□-elim p) = {!p!}
+    soundness (□-elim p) δ = ∀ʰ-elim (soundness p δ)
     soundness (⋄-intro p) = aux p
       where
         aux : {Δ : Hypotheses} → {w : W} → {ϕ : Formula} → Δ ⊢ ϕ → proof (⟦ Δ ⟧ₑ w)

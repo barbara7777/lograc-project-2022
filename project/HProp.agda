@@ -135,7 +135,6 @@ abstract
   ⇒ʰ-elim : {A B : HProp} → proof A → proof (A ⇒ʰ B) → proof B
   ⇒ʰ-elim {B} p q = q p  
   
-
   -- other
   ∃ʰ-elim : {m : Level} {A : Set} (ϕ : A → HProp) (ψ : HProp) →
                 ((x : A) → proof (ϕ x) → proof ψ) → proof (∃ʰ A ϕ) → proof ψ
