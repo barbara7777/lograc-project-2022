@@ -63,7 +63,7 @@ module Base (AtomicFormula : Set) where
     soundness (∧-elim₂ p) = λ x → ∧ʰ-elim₂ (soundness p x)
     soundness (∨-intro₁ p) = λ x → ∨ʰ-intro₁ (soundness p x)
     soundness (∨-intro₂ p) = λ x → ∨ʰ-intro₂ (soundness p x)
-    soundness (∨-elim p p₁ p₂) = λ x → {!   !} --  (soundness p x) {!   !} (soundness p₁ ?) -- ∨ʰ-elim (soundness p x) (soundness p₁ x) (soundness p₂ x ) 
+    soundness (∨-elim p p₁ p₂) δ = ∨ʰ-elim (soundness p δ) (soundness (weaken {!   !} {! p₁  !}) p₂) {!   !} --  (soundness p x) {!   !} (soundness p₁ ?) -- ∨ʰ-elim (soundness p x) (soundness p₁ x) (soundness p₂ x ) 
     soundness (⇒-intro p) δ = ⇒ʰ-intro λ q → soundness p {! aux p
       where
       -- tuki je potrebno zdruziti vse skupi
