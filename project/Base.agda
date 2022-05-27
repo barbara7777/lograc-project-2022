@@ -9,6 +9,7 @@ module Base (AtomicFormula : Set) where
   import Relation.Binary.PropositionalEquality as Eq
   open Eq renaming ([_] to [|_|])
   open Eq.≡-Reasoning
+  {- open import Data.List renaming (List to L.List; [] to List.[]; _∷_ to _List.∷_; [_] to List.[_]; _++_ to _List.++_) -} 
 
   module _ (Fr : KripkeFrame) where
     open KripkeFrame Fr
@@ -35,11 +36,12 @@ module Base (AtomicFormula : Set) where
     ⟦⟧ₑ-++ [] Δ₂ = λ p → ∧ʰ-intro ⊤ʰ-intro p
     ⟦⟧ₑ-++ (x ∷ Δ₁) Δ₂ = {!λ p → ∧ʰ-intro (∧ʰ-elim₁ p) ( ⟦⟧ₑ-++ Δ₁ Δ₂ (∧ʰ-elim₂ p))!}
 
-    and-concat : {Δ : Hypotheses}
-          → {ϕ : Formula}
+
+    and-concat : {Δ₁ Δ₂ : Hypotheses}
           → {w : W}
-          → proof (⟦ Δ ⟧ₑ w ∧ʰ ⟦ ϕ ⟧ w) → proof (⟦ Δ ++ [ ϕ ] ⟧ₑ w)
-    and-concat p = {!!}
+          → proof (⟦ Δ₁ ⟧ₑ w ∧ʰ ⟦ Δ₂ ⟧ₑ w) → proof (⟦ Δ₁ ++ Δ₂ ⟧ₑ w)
+    and-concat {[]} p = {!   !}   -- tole je bil split po Δ₁
+    and-concat {ϕ ∷ Δ₁} p = {!   !}
 
     exchange-hyp : {Δ : Hypotheses} {ϕ : Formula} {w : W} → proof (⟦ Δ ++ [ ϕ ] ⟧ₑ w) → proof (⟦ [ ϕ ] ++  Δ ⟧ₑ w)
     exchange-hyp p = {!!}
@@ -81,10 +83,10 @@ module Base (AtomicFormula : Set) where
     soundness (∨-intro₂ p) = λ x → ∨ʰ-intro₂ (soundness p x)
 
     soundness (∨-elim p p₁ p₂) = λ x → {!   !} --  (soundness p x) {!   !} (soundness p₁ ?) -- ∨ʰ-elim (soundness p x) (soundness p₁ x) (soundness p₂ x ) 
-    soundness (⇒-intro p) δ = ⇒ʰ-intro λ q → soundness p (aux q)
+    soundness (⇒-intro {Δ} {φ} p) {w} δ = ⇒ʰ-intro λ q → soundness p (aux q)
       where
-        aux : {Δ : Hypotheses} {φ : Formula} {w : W} → proof (⟦ φ ⟧ w) → proof (⟦ Δ ++ [ φ ] ⟧ₑ w)
-        aux q = and-concat (∧ʰ-intro δ q)
+        aux : proof (⟦ φ ⟧ w) → proof (⟦ Δ ++ [ φ ] ⟧ₑ w)
+        aux q = and-concat  {Δ} {[ φ ]} {w} (∧ʰ-intro δ (∧ʰ-intro q ⊤ʰ-intro)) 
     soundness (⇒-elim p p₁) = λ x → ⇒ʰ-elim (soundness p₁ x) (soundness p x)
     soundness (□-intro As x p) = {!!}
     soundness (□-elim p) δ = ∀ʰ-elim (soundness p δ)
@@ -95,3 +97,4 @@ module Base (AtomicFormula : Set) where
         aux p x = {!!}
     soundness (⋄-elim As x p p₁) = {!!}
 
+ 
