@@ -1,4 +1,4 @@
-module Base (AtomicFormula : Set) where 
+module Soundness (AtomicFormula : Set) where 
   open import KripkeFrame AtomicFormula
   open import HProp
   open import NaturalDeduction AtomicFormula
@@ -62,7 +62,7 @@ module Base (AtomicFormula : Set) where
           → proof (⟦ Δ ⟧ₑ w)  -- ce vse hipoteze veljajo v w
           → proof (⟦ φ ⟧ w)  -- potem formula velja v svetu w
 
-    soundness (weaken φ p) = {!soundness p!}
+    soundness (weaken φ p) x = {!soundness p!}
     
     soundness (contract {Δ₁} {Δ₂} φ {ψ} d) = {!soundness d!}
       where
