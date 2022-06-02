@@ -19,18 +19,18 @@ module Proofs (AtomicFormula : Set) where
       aux : (i : Fin 1) → [ □ A ] ⊢ □ lookup (A ∷ []) i
       aux zero = hyp (□ A)
 
-  □-⋄-rel : (A B : Formula) → [ □ ( A ⇒ ⋄ B) ] ⊢ ⋄ A ⇒ ⋄ B
-  -- □-⋄-rel A B = ⇒-intro (weaken (⋄ A) (⇒-elim (□-elim (hyp ( □ ( A ⇒ ⋄ B)))) (hyp A)))
-  □-⋄-rel A B = {!⋄-elim (aux₁ A B)!}
+  □-◇-rel : (A B : Formula) → [ □ ( A ⇒ ◇ B) ] ⊢ ◇ A ⇒ ◇ B
+  -- □-◇-rel A B = ⇒-intro (weaken (◇ A) (⇒-elim (□-elim (hyp ( □ ( A ⇒ ◇ B)))) (hyp A)))
+  □-◇-rel A B = {!◇-elim (aux₁ A B)!}
     where
-      aux₁ :  (C D : Formula) → [ □ ( C ⇒ ⋄ D) ] ++ [ C ] ⊢ ⋄ D
-      aux₁ C D = ⇒-elim (□-elim (hyp ( □ ( C ⇒ ⋄ D)))) (hyp C)
+      aux₁ :  (C D : Formula) → [ □ ( C ⇒ ◇ D) ] ++ [ C ] ⊢ ◇ D
+      aux₁ C D = ⇒-elim (□-elim (hyp ( □ ( C ⇒ ◇ D)))) (hyp C)
 
-  -- (hyp ( □ ( A ⇒ (⋄ B))) -- [ □ ( A ⇒ (⋄ B)) ] ⊢ □ ( A ⇒ (⋄ B))
-  -- □-elim [ □ ( A ⇒ (⋄ B)) ] ⊢ A ⇒ (⋄ B)
+  -- (hyp ( □ ( A ⇒ (◇ B))) -- [ □ ( A ⇒ (◇ B)) ] ⊢ □ ( A ⇒ (◇ B))
+  -- □-elim [ □ ( A ⇒ (◇ B)) ] ⊢ A ⇒ (◇ B)
   -- ⇒-elim
   
   -- ⇒-intro
 
-  ⋄-intro-proof : (A : Formula) → [ A ] ⊢ ⋄ A
-  ⋄-intro-proof A = ⋄-intro (hyp A)
+  ◇-intro-proof : (A : Formula) → [ A ] ⊢ ◇ A
+  ◇-intro-proof A = ◇-intro (hyp A)

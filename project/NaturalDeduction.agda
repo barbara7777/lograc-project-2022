@@ -31,13 +31,13 @@ data Formula : Set where
   _∨_ : Formula → Formula → Formula       -- disjunction (unicode \vee)
   _⇒_ : Formula → Formula → Formula       -- implication (unicode \=>)
   □_ : Formula → Formula  -- necessity (unicode \square)
-  ⋄_ : Formula → Formula  -- possibility (unicode \diamond)
+  ◇_ : Formula → Formula  -- possibility (unicode \diamond)
 
 infixr 6 _∧_
 infixr 5 _∨_
 infixr 4 _⇒_
 infixr 7 □_
-infixr 7 ⋄_
+infixr 7 ◇_
 
 {-
    Hypotheses are represented as a list of formulae.
@@ -203,21 +203,21 @@ data _⊢_ : (Δ : Hypotheses) → (φ : Formula) → Set where    -- unicode \v
 
   -- diamond
 
-  ⋄-intro : {Δ : Hypotheses}
+  ◇-intro : {Δ : Hypotheses}
           → {ϕ : Formula}
           → Δ ⊢ ϕ
           -------------------
-          → Δ ⊢ ⋄ ϕ
+          → Δ ⊢ ◇ ϕ
 
-  ⋄-elim : {Δ : Hypotheses}
+  ◇-elim : {Δ : Hypotheses}
          → {ϕ ψ : Formula}
          → {n : ℕ}
          → (As : Vec Formula n)
          → ((i : Fin n) → Δ ⊢ □ lookup As i )
-         → Δ ⊢ ⋄ ϕ
-         → (box-map As) ++  [ ϕ ] ⊢ ⋄ ψ
+         → Δ ⊢ ◇ ϕ
+         → (box-map As) ++  [ ϕ ] ⊢ ◇ ψ
          ------------------
-         → Δ ⊢ ⋄ ψ
+         → Δ ⊢ ◇ ψ
 
 {-
    We define negation and logical equivalence as syntactic sugar.

@@ -23,7 +23,7 @@ module Soundness (AtomicFormula : Set) where
     ⟦ φ ∨ ψ ⟧ w = ⟦ φ ⟧ w ∨ʰ ⟦ ψ ⟧ w
     ⟦ φ ⇒ ψ ⟧ w = ⟦ φ ⟧ w ⇒ʰ ⟦ ψ ⟧ w
     ⟦ □ ϕ ⟧ w = ∀ʰ W (λ w' → (w ≤ₕ w') ⇒ʰ ⟦ ϕ ⟧ w')
-    ⟦ ⋄ ϕ ⟧ w = ∃ʰ W (λ w' → (w ≤ₕ w') ∧ʰ ⟦ ϕ ⟧ w')
+    ⟦ ◇ ϕ ⟧ w = ∃ʰ W (λ w' → (w ≤ₕ w') ∧ʰ ⟦ ϕ ⟧ w')
 
     ⟦_⟧ₑ : Hypotheses  → ℙ             -- unicode \[[ \]] \_e
     ⟦ [] ⟧ₑ    w = ⊤ʰ 
@@ -90,11 +90,11 @@ module Soundness (AtomicFormula : Set) where
     soundness (⇒-elim p p₁) = λ x → ⇒ʰ-elim (soundness p₁ x) (soundness p x)
     soundness (□-intro As x p) = {!!}
     soundness (□-elim p) δ = ∀ʰ-elim (soundness p δ)
-    soundness (⋄-intro p) = aux p
+    soundness (◇-intro p) = aux p
       where
         aux : {Δ : Hypotheses} → {w : W} → {ϕ : Formula} → Δ ⊢ ϕ → proof (⟦ Δ ⟧ₑ w)
                    → proof (∃ʰ W (λ w' → (w ≤ₕ w') ∧ʰ ⟦ ϕ ⟧ w'))
         aux p x = {!!}
-    soundness (⋄-elim As x p p₁) = {!!}
+    soundness (◇-elim As x p p₁) = {!!}
 
  
