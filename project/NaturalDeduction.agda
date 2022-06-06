@@ -1,10 +1,3 @@
-{-
-   Allowing overlapping instances for `∈` to use in `hyp`.
-
-   Warning: If used carelessly, could lead to exponential
-   slowdown and looping behaviour during instance search.
--}
-
 {-# OPTIONS --overlapping-instances #-}
 
 {-
@@ -19,10 +12,6 @@ open import Data.Nat   using (ℕ; zero; suc; _+_; _≤_; z≤n; s≤s; _<_)
 open import Data.List  using (List; []; _∷_; [_]; _++_) public
 open import Data.Vec   using (Vec; []; _∷_)
 
-{-
-   Formulae of propositional logic.
--}
-
 data Formula : Set where
   `_  : AtomicFormula → Formula           -- atomic formula
   ⊤   : Formula                           -- truth (unicode \top)
@@ -30,8 +19,8 @@ data Formula : Set where
   _∧_ : Formula → Formula → Formula       -- conjunction (unicode \wedge)
   _∨_ : Formula → Formula → Formula       -- disjunction (unicode \vee)
   _⇒_ : Formula → Formula → Formula       -- implication (unicode \=>)
-  □_ : Formula → Formula  -- necessity (unicode \square)
-  ◇_ : Formula → Formula  -- possibility (unicode \diamond)
+  □_ : Formula → Formula                   -- necessity (unicode \square)
+  ◇_ : Formula → Formula                  -- possibility (unicode \diamond)
 
 infixr 6 _∧_
 infixr 5 _∨_
@@ -39,9 +28,6 @@ infixr 4 _⇒_
 infixr 7 □_
 infixr 7 ◇_
 
-{-
-   Hypotheses are represented as a list of formulae.
--}
 
 Hypotheses = List (Formula)
 
@@ -233,14 +219,6 @@ _⇔_ : Formula → Formula → Formula    -- unicode \<=>
 infix 7 ¬_
 infix 3 _⇔_
 
-----------------
--- Exercise 1 --
-----------------
-
-{-
-   Show that the standard introduction and elimination rules of `¬`
-   are derivable for the logical encoding of `¬` defined above.
--}
 
 ¬-intro : {Δ : Hypotheses}
         → {φ : Formula}
@@ -256,60 +234,3 @@ infix 3 _⇔_
        → Δ ⊢ ⊥
 
 ¬-elim d₁ d₂ = ⇒-elim d₂ d₁
-
-{-
-   Show that the last rule is also derivable when the assumptions
-   about `φ` and `¬ φ` being true are given as part of hypotheses.
--}
-
-¬-elim' : (φ : Formula)
-        → [ φ ] ++ [ ¬ φ ] ⊢ ⊥
-
-¬-elim' φ = ⇒-elim (hyp (¬ φ)) (hyp φ)
-
-
-----------------
--- Exercise 2 --
-----------------
-
-{-
-   Show that the cut rule is derivable in the above natural deduction
-   system (by using the intro/elim-rules of other logical connectives).
-
-   Note 1: There are more than one possible derivations of the cut rule.
-
-   Note 2: While here the richness of our logic (i.e., the other logical
-   connectives) allows us to simply **derive** the cut rule as a single
-   concrete derivation, in more general settings one usually shows the
-   **admissibility** of the cut rule by induction on the (heights of)
-   the given derivations, e.g., see https://www.jstor.org/stable/420956.
--}
-
-cut-derivable : {Δ : Hypotheses}
-              → {φ ψ : Formula}
-              → Δ ⊢ φ
-              → Δ ++ [ φ ] ⊢ ψ
-              ------------------
-              → Δ ⊢ ψ
-
-cut-derivable d₁ d₂ = ⇒-elim (⇒-intro d₂) d₁
-
-
---------------------
--- Bonus Exercise --
---------------------
-
-{-
-   Show that (in addition to cut) the other three structural rules
-   (weakening, contraction, and exchange) are also admissible.
-
-   For this it is best to create a copy of this file, remove these
-   three rules, and then define functions with corresponding types.
-
-   Hint: Instead of trying to define the functions corresponding to
-   these structural rules directly by induction on the given natural
-   deduction derivation, another approach would be to define general
-   renamings between contexts of hypothesis, together with their
-   action on derivations, and then use this action to apply suitable
-   renamings to a derivation to recover the three structural rules.
--}

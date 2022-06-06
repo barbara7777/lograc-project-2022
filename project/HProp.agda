@@ -126,7 +126,6 @@ abstract
 
   ∨ʰ-elim : {A B C : HProp} → proof (A ∨ʰ B) → proof (A ⇒ʰ C) → proof (B ⇒ʰ C) → proof C
   ∨ʰ-elim {A} {B} {C} por pac pbc = ∥∥-elim (is-prop C) [ pac , pbc ] por 
-  -- to cist na desni v oglatih oklepajih je sam pattern matching iz standardne knjiznice
   
   -- implication
   ⇒ʰ-intro : {A B : HProp} → (proof A → proof B) → proof (A ⇒ʰ B)

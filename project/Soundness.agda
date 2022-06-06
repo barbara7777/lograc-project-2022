@@ -2,14 +2,10 @@ module Soundness (AtomicFormula : Set) where
   open import KripkeFrame AtomicFormula
   open import HProp
   open import NaturalDeduction AtomicFormula
-  {- 
-  open module ND = NaturalDeduction AtomicFormula
-  -}
-
   import Relation.Binary.PropositionalEquality as Eq
   open Eq renaming ([_] to [|_|])
   open Eq.≡-Reasoning
-  {- open import Data.List renaming (List to L.List; [] to List.[]; _∷_ to _List.∷_; [_] to List.[_]; _++_ to _List.++_) -} 
+
 
   module _ (Fr : KripkeFrame) where
     open KripkeFrame Fr
