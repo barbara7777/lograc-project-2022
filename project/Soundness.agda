@@ -1,4 +1,4 @@
-module Soundness (AtomicFormula : Set) where 
+module Soundness (AtomicFormula : Set) where
   open import KripkeFrame AtomicFormula
   open import HProp
   open import NaturalDeduction AtomicFormula
@@ -12,43 +12,51 @@ module Soundness (AtomicFormula : Set) where
     ℙ = W → HProp
 
     ⟦_⟧ : Formula → ℙ
-    ⟦ ` P ⟧    w = Val w P
+    ⟦ ` P ⟧   w = Val w P
     ⟦ ⊤ ⟧     w = ⊤ʰ
     ⟦ ⊥ ⟧     w = ⊥ʰ
     ⟦ φ ∧ ψ ⟧ w = ⟦ φ ⟧ w ∧ʰ ⟦ ψ ⟧ w
     ⟦ φ ∨ ψ ⟧ w = ⟦ φ ⟧ w ∨ʰ ⟦ ψ ⟧ w
     ⟦ φ ⇒ ψ ⟧ w = ⟦ φ ⟧ w ⇒ʰ ⟦ ψ ⟧ w
-    ⟦ □ ϕ ⟧ w = ∀ʰ W (λ w' → (w ≤ₕ w') ⇒ʰ ⟦ ϕ ⟧ w')
-    ⟦ ◇ ϕ ⟧ w = ∃ʰ W (λ w' → (w ≤ₕ w') ∧ʰ ⟦ ϕ ⟧ w')
+    ⟦ □ φ ⟧ w = ∀ʰ W (λ w' → (w ≤ₕ w') ⇒ʰ ⟦ φ ⟧ w')
+    ⟦ ◇ φ ⟧ w = ∃ʰ W (λ w' → (w ≤ₕ w') ∧ʰ ⟦ φ ⟧ w')
 
     ⟦_⟧ₑ : Hypotheses  → ℙ             -- unicode \[[ \]] \_e
-    ⟦ [] ⟧ₑ    w = ⊤ʰ 
-    ⟦ φ ∷ Δ ⟧ₑ w = ⟦ φ ⟧ w ∧ʰ ⟦ Δ ⟧ₑ w   
+    ⟦ [] ⟧ₑ    w = ⊤ʰ
+    ⟦ φ ∷ Δ ⟧ₑ w = ⟦ φ ⟧ w ∧ʰ ⟦ Δ ⟧ₑ w
 
     -- helpers
-    
-    ⟦⟧ₑ-++ : (Δ₁ Δ₂ : Hypotheses) {w : W}
-       → proof (⟦ Δ₁ ++ Δ₂ ⟧ₑ w) → proof (⟦ Δ₁ ⟧ₑ w ∧ʰ ⟦ Δ₂ ⟧ₑ w)
-    ⟦⟧ₑ-++ [] Δ₂ = λ p → ∧ʰ-intro ⊤ʰ-intro p
-    ⟦⟧ₑ-++ (x ∷ Δ₁) Δ₂ = {!λ p → ∧ʰ-intro (∧ʰ-elim₁ p) ( ⟦⟧ₑ-++ Δ₁ Δ₂ (∧ʰ-elim₂ p))!}
+
+    banana-⟦⟧ₑ : {Δ : Hypotheses} {w : W} → (∀ φ → φ ∈ Δ → proof (⟦ φ ⟧ w)) → proof (⟦ Δ ⟧ₑ w)
+    banana-⟦⟧ₑ {Δ} f = {!!}
+
+    ⟦⟧ₑ-++ : (Δ₁ Δ₂ : Hypotheses) {w : W} → proof (⟦ Δ₁ ⟧ₑ w) → proof (⟦ Δ₂ ⟧ₑ w) → proof (⟦ Δ₁ ++ Δ₂ ⟧ₑ w)
+    ⟦⟧ₑ-++ [] Δ₂ δ₁ δ₂ = δ₂
+    ⟦⟧ₑ-++ (_ ∷ Δ₁) Δ₂ δ₁ δ₂ = ∧ʰ-intro (∧ʰ-elim₁ δ₁) (⟦⟧ₑ-++ Δ₁ Δ₂ (∧ʰ-elim₂ δ₁) δ₂)
+
+
+    -- ⟦⟧ₑ-++ : (Δ₁ Δ₂ : Hypotheses) {w : W}
+    --         → proof (⟦ Δ₁ ++ Δ₂ ⟧ₑ w) → proof (⟦ Δ₁ ⟧ₑ w ∧ʰ ⟦ Δ₂ ⟧ₑ w)
+    -- ⟦⟧ₑ-++ [] Δ₂ = λ p → ∧ʰ-intro ⊤ʰ-intro p
+    -- ⟦⟧ₑ-++ (x ∷ Δ₁) Δ₂ = {!λ p → ∧ʰ-intro (∧ʰ-elim₁ p) ( ⟦⟧ₑ-++ Δ₁ Δ₂ (∧ʰ-elim₂ p))!}
 
 
     and-concat : {Δ₁ Δ₂ : Hypotheses}
           → {w : W}
           → proof (⟦ Δ₁ ⟧ₑ w ∧ʰ ⟦ Δ₂ ⟧ₑ w) → proof (⟦ Δ₁ ++ Δ₂ ⟧ₑ w)
     and-concat {[]} p = {!   !}   -- tole je bil split po Δ₁
-    and-concat {ϕ ∷ Δ₁} p = {!   !}
+    and-concat {φ ∷ Δ₁} p = {!   !}
 
-    exchange-hyp : {Δ : Hypotheses} {ϕ : Formula} {w : W} → proof (⟦ Δ ++ [ ϕ ] ⟧ₑ w) → proof (⟦ [ ϕ ] ++  Δ ⟧ₑ w)
+    exchange-hyp : {Δ : Hypotheses} {φ : Formula} {w : W} → proof (⟦ Δ ++ [ φ ] ⟧ₑ w) → proof (⟦ [ φ ] ++  Δ ⟧ₑ w)
     exchange-hyp p = {!!}
 
     test : {A B : HProp} → proof A → (proof A → proof B) → proof B
     test p f = {!   !}
 
-    ∀ʰ-elim : {Δ : Hypotheses} {w : W} {ϕ : Formula} →
-          proof (∀ʰ W (λ w' → (w ≤ₕ w') ⇒ʰ ⟦ ϕ ⟧ w')) → proof (⟦ ϕ ⟧ w)
-    ∀ʰ-elim {Δ} {w} {ϕ} p = {!∀ʰ W (λ w' → (w ≤ₕ w') ⇒ʰ ⟦ ϕ ⟧ w')!}
-    
+    at-world : {Δ : Hypotheses} {w w' : W} {φ : Formula} →
+          proof (⟦ □ φ ⟧ w) → w ≤ₖ w' → proof (⟦ φ ⟧ w')
+    at-world {w = w} p w≤w' = {!!}
+
     -- soundness
 
     soundness : {Δ : Hypotheses}
@@ -59,38 +67,58 @@ module Soundness (AtomicFormula : Set) where
           → proof (⟦ φ ⟧ w)  -- potem formula velja v svetu w
 
     soundness (weaken φ p) x = {!soundness p!}
-    
+
     soundness (contract {Δ₁} {Δ₂} φ {ψ} d) = {!soundness d!}
       where
-        aux :{Δ₁ Δ₂ : Hypotheses} {w : W} {ϕ : Formula} → proof (⟦ Δ₁ ++ φ ∷ φ ∷ Δ₂ ⟧ₑ w) → proof (⟦ Δ₁ ⟧ₑ w ∧ʰ ⟦ φ ∷ Δ₂ ⟧ₑ w)
+        aux :{Δ₁ Δ₂ : Hypotheses} {w : W} {φ : Formula} → proof (⟦ Δ₁ ++ φ ∷ φ ∷ Δ₂ ⟧ₑ w) → proof (⟦ Δ₁ ⟧ₑ w ∧ʰ ⟦ φ ∷ Δ₂ ⟧ₑ w)
         aux {Δ₁} {Δ₂} p = {! ⟦⟧ₑ-++ !}
     soundness (exchange φ₁ φ₂ p) = {!!}
 
     soundness (hyp {φ ∷ Δ} φ {{ ∈-here }}) = ∧ʰ-elim₁
-    soundness (hyp {ψ ∷ Δ} ϕ {{ (∈-there {{ p }}) }}) = λ x → soundness (hyp ϕ {{ p }}) (∧ʰ-elim₂ x)
+    soundness (hyp {ψ ∷ Δ} φ {{ (∈-there {{ p }}) }}) = λ x → soundness (hyp φ {{ p }}) (∧ʰ-elim₂ x)
 
     soundness ⊤-intro = λ _ → ⊤ʰ-intro
 
-    soundness (⊥-elim p) = λ x → ⊥ʰ-elim (soundness p x)
+    soundness {φ = φ} (⊥-elim p) {w = w} = λ x → ⊥ʰ-elim {A = ⟦ φ ⟧ w} (soundness p x)
     soundness (∧-intro p p₁) = λ x → ∧ʰ-intro (soundness p x) (soundness p₁ x)
     soundness (∧-elim₁ p) = λ x → ∧ʰ-elim₁ (soundness p x)
     soundness (∧-elim₂ p) = λ x → ∧ʰ-elim₂ (soundness p x)
     soundness (∨-intro₁ p) = λ x → ∨ʰ-intro₁ (soundness p x)
     soundness (∨-intro₂ p) = λ x → ∨ʰ-intro₂ (soundness p x)
 
-    soundness (∨-elim p p₁ p₂) = λ x → {!   !} --  (soundness p x) {!   !} (soundness p₁ ?) -- ∨ʰ-elim (soundness p x) (soundness p₁ x) (soundness p₂ x ) 
+    soundness {Δ = Δ} {φ = φ} (∨-elim p p₁ p₂) {w = w} δ =
+      ∨ʰ-elim {C = ⟦ φ ⟧ w} (soundness p δ)
+         (⇒ʰ-intro (λ q → soundness p₁ (⟦⟧ₑ-++ Δ _ δ (∧ʰ-intro q ⊤ʰ-intro))))
+         {!!}
+      --  (soundness p x) {!   !} (soundness p₁ ?) -- ∨ʰ-elim (soundness p x) (soundness p₁ x) (soundness p₂ x )
     soundness (⇒-intro {Δ} {φ} p) {w} δ = ⇒ʰ-intro λ q → soundness p (aux q)
       where
         aux : proof (⟦ φ ⟧ w) → proof (⟦ Δ ++ [ φ ] ⟧ₑ w)
-        aux q = and-concat  {Δ} {[ φ ]} {w} (∧ʰ-intro δ (∧ʰ-intro q ⊤ʰ-intro)) 
+        aux q = and-concat  {Δ} {[ φ ]} {w} (∧ʰ-intro δ (∧ʰ-intro q ⊤ʰ-intro))
     soundness (⇒-elim p p₁) = λ x → ⇒ʰ-elim (soundness p₁ x) (soundness p x)
-    soundness (□-intro As x p) = {!!}
-    soundness (□-elim p) δ = ∀ʰ-elim (soundness p δ)
+    soundness (□-intro As f p) δ =
+      ∀ʰ-intro _ (λ w' → ⇒ʰ-intro
+                         (λ w≤w' → soundness p ( banana-⟦⟧ₑ {Δ = box-map As} {w = w'} (ananas _ w'))))
+      where
+        ananas : (As : Hypotheses) → (w : W) → (φ : Formula) → φ ∈ As → proof (⟦ □ φ ⟧ w)
+        ananas As w ϕ e = {!!}
+
+    soundness {Δ = Δ} {φ = φ} (□-elim p) δ = at-world {Δ = Δ} {φ = φ} (soundness p δ) ≤-refl
     soundness (◇-intro p) = aux p
       where
-        aux : {Δ : Hypotheses} → {w : W} → {ϕ : Formula} → Δ ⊢ ϕ → proof (⟦ Δ ⟧ₑ w)
-                   → proof (∃ʰ W (λ w' → (w ≤ₕ w') ∧ʰ ⟦ ϕ ⟧ w'))
+        aux : {Δ : Hypotheses} → {w : W} → {φ : Formula} → Δ ⊢ φ → proof (⟦ Δ ⟧ₑ w)
+                   → proof (∃ʰ W (λ w' → (w ≤ₕ w') ∧ʰ ⟦ φ ⟧ w'))
         aux p x = {!!}
-    soundness (◇-elim As x p p₁) = {!!}
+    soundness (◇-elim {ϕ = φ} {ψ = ψ} As f p q) {w = w} δ = {!!}
 
- 
+{-
+
+  δ         soundness p δ
+  w -------->    w'
+
+  Δ              ϕ
+                                        soundness q
+                 box-map As ++ [ φ ] -----------------> w''
+                                                        ψ
+
+-}

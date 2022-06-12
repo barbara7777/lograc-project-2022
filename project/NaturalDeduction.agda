@@ -55,7 +55,7 @@ lookup : {n : ℕ} → {A : Set} → Vec A n → Fin n → A
 lookup (a ∷ as) zero = a
 lookup (a ∷ as) (suc i) = lookup as i
 
-box-map : {n : ℕ} → Vec Formula n → List Formula
+box-map : Hypotheses → Hypotheses
 box-map [] = []
 box-map (x ∷ xs) = (□ x) ∷ box-map xs
 
@@ -120,7 +120,7 @@ data _⊢_ : (Δ : Hypotheses) → (φ : Formula) → Set where    -- unicode \v
            → Δ ⊢ ψ
            -------------------
            → Δ ⊢ φ ∧ ψ
-          
+
   ∧-elim₁  : {Δ : Hypotheses}
            → {φ ψ : Formula}
            → Δ ⊢ φ ∧ ψ
@@ -175,8 +175,8 @@ data _⊢_ : (Δ : Hypotheses) → (φ : Formula) → Set where    -- unicode \v
   □-intro : {Δ : Hypotheses}
           → {ϕ : Formula}
           → {n : ℕ}
-          → (As : Vec Formula n)
-          → ((i : Fin n) → Δ ⊢ □ lookup As i )
+          → (As : Hypotheses)
+          → (∀ A → A ∈ As → Δ ⊢ □ A)
           → box-map As ⊢ ϕ
           ------------------
           → Δ ⊢ □ ϕ
@@ -198,8 +198,8 @@ data _⊢_ : (Δ : Hypotheses) → (φ : Formula) → Set where    -- unicode \v
   ◇-elim : {Δ : Hypotheses}
          → {ϕ ψ : Formula}
          → {n : ℕ}
-         → (As : Vec Formula n)
-         → ((i : Fin n) → Δ ⊢ □ lookup As i )
+         → (As : Hypotheses)
+         → (∀ A → A ∈ As → Δ ⊢ □ A)
          → Δ ⊢ ◇ ϕ
          → (box-map As) ++  [ ϕ ] ⊢ ◇ ψ
          ------------------
