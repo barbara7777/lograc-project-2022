@@ -140,10 +140,10 @@ abstract
   ∃ʰ-elim φ ψ f p = ∥∥-elim (is-prop ψ) (λ { (x , q) → f x q }) p
 
   ∃ʰ-intro : {A : Set} (φ : A → HProp) (a : A) → proof (φ a) → proof (∃ʰ A φ)
-  ∃ʰ-intro φ a p = {!!}
+  ∃ʰ-intro φ a p = ∣ a , p ∣
 
   ∀ʰ-elim : {A : Set} (φ : A → HProp) → proof (∀ʰ A φ) → (a : A) → proof (φ a)
   ∀ʰ-elim φ p a = p a
 
   ∀ʰ-intro : {A : Set} (φ : A → HProp) → ((a : A) → proof (φ a)) → proof (∀ʰ A φ)
-  ∀ʰ-intro p = {!!}
+  ∀ʰ-intro φ p = λ x → p x
