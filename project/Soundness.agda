@@ -27,8 +27,10 @@ module Soundness (AtomicFormula : Set) where
 
     -- helpers
 
-    concat-proofs-⟦⟧ₑ : {Δ : Hypotheses} {w : W} → (∀ φ → φ ∈ Δ → proof (⟦ φ ⟧ w)) → proof (⟦ Δ ⟧ₑ w)
-    concat-proofs-⟦⟧ₑ {Δ} f = {!!}
+    concat-proofs-⟦⟧ₑ : (Δ : Hypotheses) {w : W} → (∀ φ → φ ∈ Δ → proof (⟦ φ ⟧ w)) → proof (⟦ Δ ⟧ₑ w)
+    concat-proofs-⟦⟧ₑ [] f = ⊤ʰ-intro
+    concat-proofs-⟦⟧ₑ (y ∷ Δ) {w = w} f = ∧ʰ-intro (f y ∈-here)
+                                           (concat-proofs-⟦⟧ₑ Δ {w} λ x p → f x (∈-there {{p}} ) )
 
     ⟦⟧ₑ-++ : (Δ₁ Δ₂ : Hypotheses) {w : W} → proof (⟦ Δ₁ ⟧ₑ w) → proof (⟦ Δ₂ ⟧ₑ w) → proof (⟦ Δ₁ ++ Δ₂ ⟧ₑ w)
     ⟦⟧ₑ-++ [] Δ₂ δ₁ δ₂ = δ₂
@@ -76,7 +78,7 @@ module Soundness (AtomicFormula : Set) where
     soundness (⇒-elim p p₁) = λ x → ⇒ʰ-elim (soundness p₁ x) (soundness p x)
     soundness (□-intro As f p) δ =
       ∀ʰ-intro _ (λ w' → ⇒ʰ-intro
-                         (λ w≤w' → soundness p ( concat-proofs-⟦⟧ₑ {Δ = box-map As} {w = w'} {!!})))
+                         (λ w≤w' → soundness p ( concat-proofs-⟦⟧ₑ (box-map As) {w = w'} {!!})))
       where
         extract-boxed : (As : Hypotheses) → (w : W) → (φ : Formula) → φ ∈ As → proof (⟦ □ φ ⟧ w)
         extract-boxed As w ϕ e = {!!}
