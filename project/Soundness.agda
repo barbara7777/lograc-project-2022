@@ -27,32 +27,13 @@ module Soundness (AtomicFormula : Set) where
 
     -- helpers
 
-    banana-⟦⟧ₑ : {Δ : Hypotheses} {w : W} → (∀ φ → φ ∈ Δ → proof (⟦ φ ⟧ w)) → proof (⟦ Δ ⟧ₑ w)
-    banana-⟦⟧ₑ {Δ} f = {!!}
+    concat-proofs-⟦⟧ₑ : {Δ : Hypotheses} {w : W} → (∀ φ → φ ∈ Δ → proof (⟦ φ ⟧ w)) → proof (⟦ Δ ⟧ₑ w)
+    concat-proofs-⟦⟧ₑ {Δ} f = {!!}
 
     ⟦⟧ₑ-++ : (Δ₁ Δ₂ : Hypotheses) {w : W} → proof (⟦ Δ₁ ⟧ₑ w) → proof (⟦ Δ₂ ⟧ₑ w) → proof (⟦ Δ₁ ++ Δ₂ ⟧ₑ w)
     ⟦⟧ₑ-++ [] Δ₂ δ₁ δ₂ = δ₂
     ⟦⟧ₑ-++ (_ ∷ Δ₁) Δ₂ δ₁ δ₂ = ∧ʰ-intro (∧ʰ-elim₁ δ₁) (⟦⟧ₑ-++ Δ₁ Δ₂ (∧ʰ-elim₂ δ₁) δ₂)
-
-
-    -- ⟦⟧ₑ-++ : (Δ₁ Δ₂ : Hypotheses) {w : W}
-    --         → proof (⟦ Δ₁ ++ Δ₂ ⟧ₑ w) → proof (⟦ Δ₁ ⟧ₑ w ∧ʰ ⟦ Δ₂ ⟧ₑ w)
-    -- ⟦⟧ₑ-++ [] Δ₂ = λ p → ∧ʰ-intro ⊤ʰ-intro p
-    -- ⟦⟧ₑ-++ (x ∷ Δ₁) Δ₂ = {!λ p → ∧ʰ-intro (∧ʰ-elim₁ p) ( ⟦⟧ₑ-++ Δ₁ Δ₂ (∧ʰ-elim₂ p))!}
-
-
-    and-concat : {Δ₁ Δ₂ : Hypotheses}
-          → {w : W}
-          → proof (⟦ Δ₁ ⟧ₑ w ∧ʰ ⟦ Δ₂ ⟧ₑ w) → proof (⟦ Δ₁ ++ Δ₂ ⟧ₑ w)
-    and-concat {[]} p = {!   !}   -- tole je bil split po Δ₁
-    and-concat {φ ∷ Δ₁} p = {!   !}
-
-    exchange-hyp : {Δ : Hypotheses} {φ : Formula} {w : W} → proof (⟦ Δ ++ [ φ ] ⟧ₑ w) → proof (⟦ [ φ ] ++  Δ ⟧ₑ w)
-    exchange-hyp p = {!!}
-
-    test : {A B : HProp} → proof A → (proof A → proof B) → proof B
-    test p f = {!   !}
-
+ 
     at-world : {Δ : Hypotheses} {w w' : W} {φ : Formula} →
           proof (⟦ □ φ ⟧ w) → w ≤ₖ w' → proof (⟦ φ ⟧ w')
     at-world {w = w} p w≤w' = {!!}
@@ -91,17 +72,14 @@ module Soundness (AtomicFormula : Set) where
          (⇒ʰ-intro (λ q → soundness p₁ (⟦⟧ₑ-++ Δ _ δ (∧ʰ-intro q ⊤ʰ-intro))))
          {!!}
       --  (soundness p x) {!   !} (soundness p₁ ?) -- ∨ʰ-elim (soundness p x) (soundness p₁ x) (soundness p₂ x )
-    soundness (⇒-intro {Δ} {φ} p) {w} δ = ⇒ʰ-intro λ q → soundness p (aux q)
-      where
-        aux : proof (⟦ φ ⟧ w) → proof (⟦ Δ ++ [ φ ] ⟧ₑ w)
-        aux q = and-concat  {Δ} {[ φ ]} {w} (∧ʰ-intro δ (∧ʰ-intro q ⊤ʰ-intro))
+    soundness (⇒-intro {Δ} {φ} p) {w} δ = {!!}
     soundness (⇒-elim p p₁) = λ x → ⇒ʰ-elim (soundness p₁ x) (soundness p x)
     soundness (□-intro As f p) δ =
       ∀ʰ-intro _ (λ w' → ⇒ʰ-intro
-                         (λ w≤w' → soundness p ( banana-⟦⟧ₑ {Δ = box-map As} {w = w'} (ananas _ w'))))
+                         (λ w≤w' → soundness p ( concat-proofs-⟦⟧ₑ {Δ = box-map As} {w = w'} {!!})))
       where
-        ananas : (As : Hypotheses) → (w : W) → (φ : Formula) → φ ∈ As → proof (⟦ □ φ ⟧ w)
-        ananas As w ϕ e = {!!}
+        extract-boxed : (As : Hypotheses) → (w : W) → (φ : Formula) → φ ∈ As → proof (⟦ □ φ ⟧ w)
+        extract-boxed As w ϕ e = {!!}
 
     soundness {Δ = Δ} {φ = φ} (□-elim p) δ = at-world {Δ = Δ} {φ = φ} (soundness p δ) ≤-refl
     soundness (◇-intro p) = aux p
@@ -109,14 +87,14 @@ module Soundness (AtomicFormula : Set) where
         aux : {Δ : Hypotheses} → {w : W} → {φ : Formula} → Δ ⊢ φ → proof (⟦ Δ ⟧ₑ w)
                    → proof (∃ʰ W (λ w' → (w ≤ₕ w') ∧ʰ ⟦ φ ⟧ w'))
         aux p x = {!!}
-    soundness (◇-elim {ϕ = φ} {ψ = ψ} As f p q) {w = w} δ = {!!}
+    soundness (◇-elim {ψ = ψ} As f p q) {w = w} δ = {!!}
 
 {-
 
   δ         soundness p δ
   w -------->    w'
 
-  Δ              ϕ
+  Δ              φ
                                         soundness q
                  box-map As ++ [ φ ] -----------------> w''
                                                         ψ
