@@ -38,7 +38,7 @@ module Soundness (AtomicFormula : Set) where
  
     at-world : {Δ : Hypotheses} {w w' : W} {φ : Formula} →
           proof (⟦ □ φ ⟧ w) → w ≤ₖ w' → proof (⟦ φ ⟧ w')
-    at-world {w = w} p w≤w' = {!!}
+    at-world {w = w} p w≤w' = ? -- ∀ʰ-elim {A = {!!}} {!!} {!!} {!!}
 
     -- soundness
 
