@@ -82,11 +82,7 @@ module Soundness (AtomicFormula : Set) where
         extract-boxed As w ϕ e = {!!}
 
     soundness {Δ = Δ} {φ = φ} (□-elim p) δ = at-world {Δ = Δ} {φ = φ} (soundness p δ) ≤-refl
-    soundness (◇-intro p) = aux p
-      where
-        aux : {Δ : Hypotheses} → {w : W} → {φ : Formula} → Δ ⊢ φ → proof (⟦ Δ ⟧ₑ w)
-                   → proof (∃ʰ W (λ w' → (w ≤ₕ w') ∧ʰ ⟦ φ ⟧ w'))
-        aux p x = {!!}
+    soundness (◇-intro p) = {!!}
     soundness (◇-elim {ψ = ψ} As f p q) {w = w} δ = {!!}
 
 {-
