@@ -91,12 +91,12 @@ abstract
   -- existential quantification
 
   ∃ʰ : (A : Set) → (A → HProp) → HProp
-  ∃ʰ A ϕ = ⟨ ∥ Σ[ x ∈ A ] proof (ϕ x) ∥ , ∥∥-is-proposition _ ⟩
+  ∃ʰ A φ = ⟨ ∥ Σ[ x ∈ A ] proof (φ x) ∥ , ∥∥-is-proposition _ ⟩
 
   -- universal quantification
 
   ∀ʰ : (A : Set) → (A → HProp) → HProp
-  ∀ʰ A ϕ = ⟨ (∀ x → proof (ϕ x)) , (λ f g → fun-ext (λ x → is-prop (ϕ x) (f x) (g x))) ⟩
+  ∀ʰ A φ = ⟨ (∀ x → proof (φ x)) , (λ f g → fun-ext (λ x → is-prop (φ x) (f x) (g x))) ⟩
 
   -- proofs
   --truth
@@ -135,15 +135,15 @@ abstract
   ⇒ʰ-elim {B} p q = q p
 
   -- quantifiers
-  ∃ʰ-elim : {A : Set} (ϕ : A → HProp) (ψ : HProp) →
-            ((x : A) → proof (ϕ x) → proof ψ) → proof (∃ʰ A ϕ) → proof ψ
-  ∃ʰ-elim ϕ ψ f p = ∥∥-elim (is-prop ψ) (λ { (x , q) → f x q }) p
+  ∃ʰ-elim : {A : Set} (φ : A → HProp) (ψ : HProp) →
+            ((x : A) → proof (φ x) → proof ψ) → proof (∃ʰ A φ) → proof ψ
+  ∃ʰ-elim φ ψ f p = ∥∥-elim (is-prop ψ) (λ { (x , q) → f x q }) p
 
-  ∃ʰ-intro : {A : Set} (ϕ : A → HProp) (a : A) → proof (ϕ a) → proof (∃ʰ A ϕ)
-  ∃ʰ-intro ϕ a p = {!!}
+  ∃ʰ-intro : {A : Set} (φ : A → HProp) (a : A) → proof (φ a) → proof (∃ʰ A φ)
+  ∃ʰ-intro φ a p = {!!}
 
-  ∀ʰ-elim : {A : Set} (ϕ : A → HProp) → proof (∀ʰ A ϕ) → (a : A) → proof (ϕ a)
-  ∀ʰ-elim ϕ p a = p a
+  ∀ʰ-elim : {A : Set} (φ : A → HProp) → proof (∀ʰ A φ) → (a : A) → proof (φ a)
+  ∀ʰ-elim φ p a = p a
 
-  ∀ʰ-intro : {A : Set} (ϕ : A → HProp) → ((a : A) → proof (ϕ a)) → proof (∀ʰ A ϕ)
+  ∀ʰ-intro : {A : Set} (φ : A → HProp) → ((a : A) → proof (φ a)) → proof (∀ʰ A φ)
   ∀ʰ-intro p = {!!}

@@ -173,35 +173,35 @@ data _⊢_ : (Δ : Hypotheses) → (φ : Formula) → Set where    -- unicode \v
   -- square
 
   □-intro : {Δ : Hypotheses}
-          → {ϕ : Formula}
+          → {φ : Formula}
           → {n : ℕ}
           → (As : Hypotheses)
           → (∀ A → A ∈ As → Δ ⊢ □ A)
-          → box-map As ⊢ ϕ
+          → box-map As ⊢ φ
           ------------------
-          → Δ ⊢ □ ϕ
+          → Δ ⊢ □ φ
 
   □-elim : {Δ : Hypotheses}
-          → {ϕ : Formula}
-          → Δ ⊢ □ ϕ
+          → {φ : Formula}
+          → Δ ⊢ □ φ
           -------------------
-          → Δ ⊢ ϕ
+          → Δ ⊢ φ
 
   -- diamond
 
   ◇-intro : {Δ : Hypotheses}
-          → {ϕ : Formula}
-          → Δ ⊢ ϕ
+          → {φ : Formula}
+          → Δ ⊢ φ
           -------------------
-          → Δ ⊢ ◇ ϕ
+          → Δ ⊢ ◇ φ
 
   ◇-elim : {Δ : Hypotheses}
-         → {ϕ ψ : Formula}
+         → {φ ψ : Formula}
          → {n : ℕ}
          → (As : Hypotheses)
          → (∀ A → A ∈ As → Δ ⊢ □ A)
-         → Δ ⊢ ◇ ϕ
-         → (box-map As) ++  [ ϕ ] ⊢ ◇ ψ
+         → Δ ⊢ ◇ φ
+         → (box-map As) ++  [ φ ] ⊢ ◇ ψ
          ------------------
          → Δ ⊢ ◇ ψ
 
