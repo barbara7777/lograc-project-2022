@@ -38,7 +38,7 @@ module Soundness (AtomicFormula : Set) where
  
     at-world : {Δ : Hypotheses} {w w' : W} {φ : Formula} →
           proof (⟦ □ φ ⟧ w) → w ≤ₖ w' → proof (⟦ φ ⟧ w')
-    at-world {w = w} p w≤w' = ? -- ∀ʰ-elim {A = {!!}} {!!} {!!} {!!}
+    at-world {w = w} {w' = w'} {φ = φ} p w≤w' = ⇒ʰ-elim w≤w' (∀ʰ-elim p w')
 
     -- soundness
 
@@ -77,7 +77,7 @@ module Soundness (AtomicFormula : Set) where
     soundness (⇒-intro {Δ} {φ} p) {w} δ = {!!}
     soundness (⇒-elim p p₁) = λ x → ⇒ʰ-elim (soundness p₁ x) (soundness p x)
     soundness (□-intro As f p) δ =
-      ∀ʰ-intro _ (λ w' → ⇒ʰ-intro
+      ∀ʰ-intro (λ w' → ⇒ʰ-intro
                          (λ w≤w' → soundness p ( concat-proofs-⟦⟧ₑ (box-map As) {w = w'} {!!})))
       where
         extract-boxed : (As : Hypotheses) → (w : W) → (φ : Formula) → φ ∈ As → proof (⟦ □ φ ⟧ w)

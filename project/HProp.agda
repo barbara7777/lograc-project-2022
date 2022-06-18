@@ -135,15 +135,15 @@ abstract
   ⇒ʰ-elim {B} p q = q p
 
   -- quantifiers
-  ∃ʰ-elim : {A : Set} (φ : A → HProp) (ψ : HProp) →
+  ∃ʰ-elim : {A : Set} {φ : A → HProp} (ψ : HProp) →
             ((x : A) → proof (φ x) → proof ψ) → proof (∃ʰ A φ) → proof ψ
-  ∃ʰ-elim φ ψ f p = ∥∥-elim (is-prop ψ) (λ { (x , q) → f x q }) p
+  ∃ʰ-elim ψ f p = ∥∥-elim (is-prop ψ) (λ { (x , q) → f x q }) p
 
-  ∃ʰ-intro : {A : Set} (φ : A → HProp) (a : A) → proof (φ a) → proof (∃ʰ A φ)
-  ∃ʰ-intro φ a p = ∣ a , p ∣
+  ∃ʰ-intro : {A : Set} {φ : A → HProp} (a : A) → proof (φ a) → proof (∃ʰ A φ)
+  ∃ʰ-intro a p = ∣ a , p ∣
 
-  ∀ʰ-elim : {A : Set} (φ : A → HProp) → proof (∀ʰ A φ) → (a : A) → proof (φ a)
-  ∀ʰ-elim φ p a = p a
+  ∀ʰ-elim : {A : Set} {φ : A → HProp} → proof (∀ʰ A φ) → (a : A) → proof (φ a)
+  ∀ʰ-elim p a = p a
 
-  ∀ʰ-intro : {A : Set} (φ : A → HProp) → ((a : A) → proof (φ a)) → proof (∀ʰ A φ)
-  ∀ʰ-intro φ p = λ x → p x
+  ∀ʰ-intro : {A : Set} {φ : A → HProp} → ((a : A) → proof (φ a)) → proof (∀ʰ A φ)
+  ∀ʰ-intro p = λ x → p x
