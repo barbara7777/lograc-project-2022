@@ -59,9 +59,7 @@ module Soundness (AtomicFormula : Set) where
 
     soundness (hyp {φ ∷ Δ} φ {{ ∈-here }}) = ∧ʰ-elim₁
     soundness (hyp {ψ ∷ Δ} φ {{ (∈-there {{ p }}) }}) = λ x → soundness (hyp φ {{ p }}) (∧ʰ-elim₂ x)
-
     soundness ⊤-intro = λ _ → ⊤ʰ-intro
-
     soundness {φ = φ} (⊥-elim p) {w = w} = λ x → ⊥ʰ-elim {A = ⟦ φ ⟧ w} (soundness p x)
     soundness (∧-intro p p₁) = λ x → ∧ʰ-intro (soundness p x) (soundness p₁ x)
     soundness (∧-elim₁ p) = λ x → ∧ʰ-elim₁ (soundness p x)
@@ -72,8 +70,7 @@ module Soundness (AtomicFormula : Set) where
     soundness {Δ = Δ} {φ = φ} (∨-elim p p₁ p₂) {w = w} δ =
       ∨ʰ-elim {C = ⟦ φ ⟧ w} (soundness p δ)
          (⇒ʰ-intro (λ q → soundness p₁ (⟦⟧ₑ-++ Δ _ δ (∧ʰ-intro q ⊤ʰ-intro))))
-         {!!}
-      --  (soundness p x) {!   !} (soundness p₁ ?) -- ∨ʰ-elim (soundness p x) (soundness p₁ x) (soundness p₂ x )
+         (⇒ʰ-intro (λ q → soundness p₂ (⟦⟧ₑ-++ Δ _ δ (∧ʰ-intro q ⊤ʰ-intro))))
     soundness (⇒-intro {Δ} {φ} p) {w} δ = {!!}
     soundness (⇒-elim p p₁) = λ x → ⇒ʰ-elim (soundness p₁ x) (soundness p x)
     soundness (□-intro As f p) δ =
