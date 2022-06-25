@@ -7,7 +7,10 @@ module Proofs (AtomicFormula : Set) where
   open import Data.Fin   using (Fin; zero; suc)
 
   □-dist : (A B : Formula) → [ □ (A ⇒ B) ] ⊢ □ A ⇒ □ B --\vdash
-  □-dist A B = {!⇒-elim (□-elim (hyp (□ (A ⇒ B)))) (hyp (□ A)))!}
+  □-dist A B = {!prove-B A B!}
+    where
+      prove-B : (A B : Formula) → □ (A ⇒ B) ∷ A ∷ [] ⊢ B
+      prove-B A B = ⇒-elim (weaken {[ □ (A ⇒ B) ]} {[]} A (□-elim (hyp {[ □ (A ⇒ B) ]} (□ (A ⇒ B))))) (hyp A)
 
   □-elim-proof : (A : Formula) →  [ □ A ]  ⊢ A 
   □-elim-proof A = □-elim (hyp (□ A))
@@ -20,10 +23,7 @@ module Proofs (AtomicFormula : Set) where
       aux B ∈-here = hyp (□ B)
 
   □-◇-rel : (A B : Formula) → [ □ ( A ⇒ ◇ B) ] ⊢ ◇ A ⇒ ◇ B
-  □-◇-rel A B = {!◇-elim (aux₁ A B)!}
-    where
-      aux₁ :  (C D : Formula) → [ □ ( C ⇒ ◇ D) ] ++ [ C ] ⊢ ◇ D
-      aux₁ C D = ⇒-elim (□-elim (hyp ( □ ( C ⇒ ◇ D)))) (hyp C)
+  □-◇-rel A B = {!!}
 
   ◇-intro-proof : (A : Formula) → [ A ] ⊢ ◇ A
   ◇-intro-proof A = ◇-intro (hyp A)
