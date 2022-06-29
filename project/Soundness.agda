@@ -36,6 +36,10 @@ module Soundness (AtomicFormula : Set) where
     ⟦⟧ₑ-++ [] Δ₂ δ₁ δ₂ = δ₂
     ⟦⟧ₑ-++ (_ ∷ Δ₁) Δ₂ δ₁ δ₂ = ∧ʰ-intro (∧ʰ-elim₁ δ₁) (⟦⟧ₑ-++ Δ₁ Δ₂ (∧ʰ-elim₂ δ₁) δ₂)
  
+
+    test : (Δ₁ Δ₂ : Hypotheses) {w : W} → proof (⟦ Δ₁ ++ Δ₂ ⟧ₑ w) → proof (⟦ Δ₂ ⟧ₑ w) 
+    test = {!   !}
+
     at-world : {w w' : W} {φ : Formula} →
           proof (⟦ □ φ ⟧ w) → w ≤ₖ w' → proof (⟦ φ ⟧ w')
     at-world {w = w} {w' = w'} {φ = φ} p w≤w' = ⇒ʰ-elim w≤w' (∀ʰ-elim p w')
@@ -66,7 +70,7 @@ module Soundness (AtomicFormula : Set) where
       ∨ʰ-elim {C = ⟦ φ ⟧ w} (soundness p δ)
          (⇒ʰ-intro (λ q → soundness p₁ (⟦⟧ₑ-++ Δ _ δ (∧ʰ-intro q ⊤ʰ-intro))))
          (⇒ʰ-intro (λ q → soundness p₂ (⟦⟧ₑ-++ Δ _ δ (∧ʰ-intro q ⊤ʰ-intro))))
-    soundness (⇒-intro {Δ} {φ} p) {w} δ = {!!}
+    soundness {Δ = Δ} (⇒-intro {Δ} {φ} {ψ} p) {w = w} δ =  ⇒ʰ-intro (λ x → soundness p (⟦⟧ₑ-++ Δ [ φ ] δ (∧ʰ-intro x ⊤ʰ-intro))) 
     soundness (⇒-elim p p₁) = λ x → ⇒ʰ-elim (soundness p₁ x) (soundness p x)
     soundness (□-intro As f p) δ =
       ∀ʰ-intro (λ w' → ⇒ʰ-intro
@@ -74,10 +78,10 @@ module Soundness (AtomicFormula : Set) where
                            λ φ elem → at-world {φ = φ} (extract-boxed φ elem) w≤w' )))
       where
         extract-boxed : {w : W} (φ : Formula) → φ ∈ box-map As → proof (⟦ □ φ ⟧ w)
-        extract-boxed = {!!}
+        extract-boxed {w = w} φ p = ∀ʰ-intro {!   !}
 
     soundness {Δ = Δ} {φ = φ} (□-elim p) δ = at-world {φ = φ} (soundness p δ) ≤-refl
-    soundness (◇-intro p) = {!!}
+    soundness (◇-intro p) δ = {!   !}
     soundness (◇-elim {ψ = ψ} As f p q) {w = w} δ = {!!}
 
 {-
