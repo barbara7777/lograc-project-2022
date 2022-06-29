@@ -81,9 +81,17 @@ module Soundness (AtomicFormula : Set) where
         extract-boxed {w = w} φ p = ∀ʰ-intro {!   !}
 
     soundness {Δ = Δ} {φ = φ} (□-elim p) δ = at-world {φ = φ} (soundness p δ) ≤-refl
-    soundness (◇-intro p) δ = {!   !}
+    soundness (◇-intro p) {w = w} δ = ∃ʰ-intro w (∧ʰ-intro ≤-refl (soundness p δ))
     soundness (◇-elim {ψ = ψ} As f p q) {w = w} δ = {!!}
 
+
+    {- soundness Δ (⇒-elim P Q) η H =
+    modus-ponens (soundness Δ P η H) (soundness Δ Q η H)
+        where
+            modus-ponens : ∀ {A B : Set} → (A → B) → A → B
+            modus-ponens x y = x y -}
+
+            
 {-
 
   δ         soundness p δ
