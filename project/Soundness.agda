@@ -37,9 +37,6 @@ module Soundness (AtomicFormula : Set) where
     ⟦⟧ₑ-++ (_ ∷ Δ₁) Δ₂ δ₁ δ₂ = ∧ʰ-intro (∧ʰ-elim₁ δ₁) (⟦⟧ₑ-++ Δ₁ Δ₂ (∧ʰ-elim₂ δ₁) δ₂)
  
 
-    test : (Δ₁ Δ₂ : Hypotheses) {w : W} → proof (⟦ Δ₁ ++ Δ₂ ⟧ₑ w) → proof (⟦ Δ₂ ⟧ₑ w) 
-    test = {!   !}
-
     at-world : {w w' : W} {φ : Formula} →
           proof (⟦ □ φ ⟧ w) → w ≤ₖ w' → proof (⟦ φ ⟧ w')
     at-world {w = w} {w' = w'} {φ = φ} p w≤w' = ⇒ʰ-elim w≤w' (∀ʰ-elim p w')
@@ -72,26 +69,17 @@ module Soundness (AtomicFormula : Set) where
          (⇒ʰ-intro (λ q → soundness p₂ (⟦⟧ₑ-++ Δ _ δ (∧ʰ-intro q ⊤ʰ-intro))))
     soundness {Δ = Δ} (⇒-intro {Δ} {φ} {ψ} p) {w = w} δ =  ⇒ʰ-intro (λ x → soundness p (⟦⟧ₑ-++ Δ [ φ ] δ (∧ʰ-intro x ⊤ʰ-intro))) 
     soundness (⇒-elim p p₁) = λ x → ⇒ʰ-elim (soundness p₁ x) (soundness p x)
-    soundness (□-intro As f p) δ =
-      ∀ʰ-intro (λ w' → ⇒ʰ-intro
-                         (λ w≤w' → soundness p (concat-proofs-⟦⟧ₑ (box-map As) {w = w'}
-                           λ φ elem → at-world {φ = φ} (extract-boxed φ elem) w≤w' )))
-      where
-        extract-boxed : {w : W} (φ : Formula) → φ ∈ box-map As → proof (⟦ □ φ ⟧ w)
-        extract-boxed {w = w} φ p = ∀ʰ-intro {!   !}
+    soundness (□-intro As q p) {w = w} δ = ∀ʰ-intro (λ w' → 
+      ⇒ʰ-intro λ w≤w' → soundness p (aux As w≤w' (soundness q δ)))
+        where
+          aux : {w' : W} → (As : List Formula) → (w≤w' : w ≤ₖ w') → (proof (⟦ box-∧-map As ⟧ w)) → (proof (⟦ box-map As ⟧ₑ w'))
+          aux [] w≤w' p = p
+          aux (x ∷ As) w≤w' p = {!   !}
 
     soundness {Δ = Δ} {φ = φ} (□-elim p) δ = at-world {φ = φ} (soundness p δ) ≤-refl
     soundness (◇-intro p) {w = w} δ = ∃ʰ-intro w (∧ʰ-intro ≤-refl (soundness p δ))
-    soundness (◇-elim {ψ = ψ} As f p q) {w = w} δ = {!!}
+    soundness (◇-elim {ψ = ψ} As f p q) {w = w} δ = {!!}         
 
-
-    {- soundness Δ (⇒-elim P Q) η H =
-    modus-ponens (soundness Δ P η H) (soundness Δ Q η H)
-        where
-            modus-ponens : ∀ {A B : Set} → (A → B) → A → B
-            modus-ponens x y = x y -}
-
-            
 {-
 
   δ         soundness p δ
@@ -103,3 +91,4 @@ module Soundness (AtomicFormula : Set) where
                                                         ψ
 
 -}
+ 

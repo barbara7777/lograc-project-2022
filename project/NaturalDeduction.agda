@@ -59,6 +59,10 @@ box-map : Hypotheses → Hypotheses
 box-map [] = []
 box-map (x ∷ xs) = (□ x) ∷ box-map xs
 
+box-∧-map : Hypotheses → Formula
+box-∧-map [] = ⊤
+box-∧-map (φ ∷ As) = □ φ ∧ box-∧-map As
+
 {-
    Below is a natural deduction style proof calculus for **intuitionistic**
    propositional logic, formalised as an inductive relation.
@@ -176,7 +180,7 @@ data _⊢_ : (Δ : Hypotheses) → (φ : Formula) → Set where    -- unicode \v
           → {φ : Formula}
           → {n : ℕ}
           → (As : Hypotheses)
-          → (∀ A → A ∈ As → Δ ⊢ □ A)
+          → Δ ⊢ box-∧-map As
           → box-map As ⊢ φ
           ------------------
           → Δ ⊢ □ φ
@@ -199,7 +203,7 @@ data _⊢_ : (Δ : Hypotheses) → (φ : Formula) → Set where    -- unicode \v
          → {φ ψ : Formula}
          → {n : ℕ}
          → (As : Hypotheses)
-         → (∀ A → A ∈ As → Δ ⊢ □ A)
+         → Δ ⊢ box-∧-map As
          → Δ ⊢ ◇ φ
          → (box-map As) ++  [ φ ] ⊢ ◇ ψ
          ------------------
