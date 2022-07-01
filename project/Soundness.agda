@@ -41,6 +41,10 @@ module Soundness (AtomicFormula : Set) where
           proof (⟦ □ φ ⟧ w) → w ≤ₖ w' → proof (⟦ φ ⟧ w')
     at-world {w = w} {w' = w'} {φ = φ} p w≤w' = ⇒ʰ-elim w≤w' (∀ʰ-elim p w')
 
+    -- to potem prestavi v drug file, kjer ima smisel
+    □-monotonicity : {w w' : W} {φ : Formula} → proof (⟦ □ φ ⟧ w) → proof (w ≤ₕ w') → proof (⟦ □ φ ⟧ w')
+    □-monotonicity p q = ∀ʰ-intro (λ w'' → ⇒ʰ-intro (λ r → ⇒ʰ-elim (≤-transitive q r) (∀ʰ-elim p w'')))
+
     -- soundness
 
     soundness : {Δ : Hypotheses}
@@ -74,7 +78,7 @@ module Soundness (AtomicFormula : Set) where
         where
           aux : {w' : W} → (As : List Formula) → (w≤w' : w ≤ₖ w') → (proof (⟦ box-∧-map As ⟧ w)) → (proof (⟦ box-map As ⟧ₑ w'))
           aux [] w≤w' p = p
-          aux {w' = w'} (x ∷ xs) w≤w' p =  ∧ʰ-intro {! ∀ʰ-elim (∧ʰ-elim₁ p) w' !} {!   !}
+          aux {w' = w'} (φ ∷ φs) w≤w' p =  ∧ʰ-intro (□-monotonicity {w = w} {φ = φ} (∧ʰ-elim₁ p) w≤w') (aux φs w≤w' ((∧ʰ-elim₂ p)))
 
     soundness {Δ = Δ} {φ = φ} (□-elim p) δ = at-world {φ = φ} (soundness p δ) ≤-refl
     soundness (◇-intro p) {w = w} δ = ∃ʰ-intro w (∧ʰ-intro ≤-refl (soundness p δ))
