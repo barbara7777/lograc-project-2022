@@ -74,7 +74,7 @@ module Soundness (AtomicFormula : Set) where
         where
           aux : {w' : W} → (As : List Formula) → (w≤w' : w ≤ₖ w') → (proof (⟦ box-∧-map As ⟧ w)) → (proof (⟦ box-map As ⟧ₑ w'))
           aux [] w≤w' p = p
-          aux (x ∷ As) w≤w' p = {!   !}
+          aux {w' = w'} (x ∷ xs) w≤w' p =  ∧ʰ-intro {! ∀ʰ-elim (∧ʰ-elim₁ p) w' !} {!   !}
 
     soundness {Δ = Δ} {φ = φ} (□-elim p) δ = at-world {φ = φ} (soundness p δ) ≤-refl
     soundness (◇-intro p) {w = w} δ = ∃ʰ-intro w (∧ʰ-intro ≤-refl (soundness p δ))
