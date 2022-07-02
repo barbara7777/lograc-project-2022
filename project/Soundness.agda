@@ -54,8 +54,8 @@ module Soundness (AtomicFormula : Set) where
           → proof (⟦ Δ ⟧ₑ w)  -- ce vse hipoteze veljajo v w
           → proof (⟦ φ ⟧ w)  -- potem formula velja v svetu w
 
-    soundness (weaken φ p) x = {!soundness p!}
-    soundness (contract {Δ₁} {Δ₂} φ {ψ} d) = {!soundness d!}
+    soundness (weaken φ p) δ = {!!}
+    soundness {Δ = Δ} (contract {Δ₁} {Δ₂} φ {ψ} d) {w = w} δ = soundness d {w = w} ? 
     soundness (exchange φ₁ φ₂ p) = {!!}
 
     soundness (hyp {φ ∷ Δ} φ {{ ∈-here }}) = ∧ʰ-elim₁
