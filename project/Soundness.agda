@@ -35,7 +35,23 @@ module Soundness (AtomicFormula : Set) where
     ⟦⟧ₑ-++ : (Δ₁ Δ₂ : Hypotheses) {w : W} → proof (⟦ Δ₁ ⟧ₑ w) → proof (⟦ Δ₂ ⟧ₑ w) → proof (⟦ Δ₁ ++ Δ₂ ⟧ₑ w)
     ⟦⟧ₑ-++ [] Δ₂ δ₁ δ₂ = δ₂
     ⟦⟧ₑ-++ (_ ∷ Δ₁) Δ₂ δ₁ δ₂ = ∧ʰ-intro (∧ʰ-elim₁ δ₁) (⟦⟧ₑ-++ Δ₁ Δ₂ (∧ʰ-elim₂ δ₁) δ₂)
- 
+
+    remove-specific-⟦⟧ₑ : {Δ₁ Δ₂ : Hypotheses} {φ : Formula} {w : W}
+                          → proof (⟦ Δ₁ ++ φ ∷ Δ₂ ⟧ₑ w)
+                          → proof (⟦ Δ₁ ++ Δ₂ ⟧ₑ w)
+    remove-specific-⟦⟧ₑ {Δ₁} {Δ₂} {φ} {w} p = ⟦⟧ₑ-++ Δ₁ Δ₂ (prove-Δ₁ {Δ₁} {Δ₂} {φ} p) (prove-Δ₂ {Δ₁} {Δ₂} {φ} p)
+      where
+        prove-Δ₁ : {Δ₁ Δ₂ : Hypotheses} {φ : Formula} → proof (⟦ Δ₁ ++ φ ∷ Δ₂ ⟧ₑ w) → proof(⟦ Δ₁ ⟧ₑ w)
+        prove-Δ₁ {Δ₁} {[]} {φ} p =  ∧ʰ-elim₁ {A = ⟦ Δ₁ ⟧ₑ w} {B = ⟦ [ φ ] ⟧ₑ w} {!p!} 
+        prove-Δ₁ {Δ₁} {x ∷ Δ₂} {φ} p = {! remove-specific-⟦⟧ₑ {Δ₁ ++ [ φ ]} {Δ₂} {x} {w} p!}
+
+        prove-Δ₂ : {Δ₁ Δ₂ : Hypotheses} {φ : Formula} → proof (⟦ Δ₁ ++ φ ∷ Δ₂ ⟧ₑ w) → proof(⟦ Δ₂ ⟧ₑ w)
+        prove-Δ₂ {[]} {Δ₂} {φ} p = ∧ʰ-elim₂ p
+        prove-Δ₂ {x ∷ Δ₁} {Δ₂} {φ} p = prove-Δ₂ {Δ₁} {Δ₂} {φ} (∧ʰ-elim₂ p)
+
+        prove-φ : {Δ₁ Δ₂ : Hypotheses} {φ : Formula} → proof (⟦ Δ₁ ++ φ ∷ Δ₂ ⟧ₑ w) → proof(⟦ φ ⟧ w)
+        prove-φ {[]} {Δ₂} {φ} p = ∧ʰ-elim₁ p
+        prove-φ {x ∷ Δ₁} {Δ₂} {φ} p = prove-φ {Δ₁} {Δ₂} {φ} (∧ʰ-elim₂ p)
 
     at-world : {w w' : W} {φ : Formula} →
           proof (⟦ □ φ ⟧ w) → w ≤ₖ w' → proof (⟦ φ ⟧ w')
@@ -54,7 +70,8 @@ module Soundness (AtomicFormula : Set) where
           → proof (⟦ Δ ⟧ₑ w)  -- ce vse hipoteze veljajo v w
           → proof (⟦ φ ⟧ w)  -- potem formula velja v svetu w
 
-    soundness (weaken φ p) δ = {!!}
+    soundness {Δ = Δ} {φ = φ₁} (weaken {Δ₁} {Δ₂} φ p) {w = w} δ = soundness p {w = w}
+      (remove-specific-⟦⟧ₑ {Δ₁} {Δ₂} {φ} δ)
     soundness {Δ = Δ} (contract {Δ₁} {Δ₂} φ {ψ} d) {w = w} δ = soundness d {w = w} {!!} 
     soundness (exchange φ₁ φ₂ p) = {!!}
 
