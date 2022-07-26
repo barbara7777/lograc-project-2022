@@ -27,6 +27,9 @@ module Soundness (AtomicFormula : Set) where
 
     -- helpers
 
+    swap-formulas : {Δ : Hypotheses} {φ : Formula} {w : W} → proof(⟦ Δ ++ φ ∷ [] ⟧ₑ w) → proof(⟦ φ ∷ Δ ⟧ₑ w)
+    swap-formulas {Δ} p = {!∧ʰ-elim₁ p!}
+
     concat-proofs-⟦⟧ₑ : (Δ : Hypotheses) {w : W} → (∀ φ → φ ∈ Δ → proof (⟦ φ ⟧ w)) → proof (⟦ Δ ⟧ₑ w)
     concat-proofs-⟦⟧ₑ [] f = ⊤ʰ-intro
     concat-proofs-⟦⟧ₑ (y ∷ Δ) {w = w} f = ∧ʰ-intro (f y ∈-here)
@@ -42,8 +45,8 @@ module Soundness (AtomicFormula : Set) where
     remove-specific-⟦⟧ₑ {Δ₁} {Δ₂} {φ} {w} p = ⟦⟧ₑ-++ Δ₁ Δ₂ (prove-Δ₁ {Δ₁} {Δ₂} {φ} p) (prove-Δ₂ {Δ₁} {Δ₂} {φ} p)
       where
         prove-Δ₁ : {Δ₁ Δ₂ : Hypotheses} {φ : Formula} → proof (⟦ Δ₁ ++ φ ∷ Δ₂ ⟧ₑ w) → proof(⟦ Δ₁ ⟧ₑ w)
-        prove-Δ₁ {Δ₁} {[]} {φ} p =  ∧ʰ-elim₁ {A = ⟦ Δ₁ ⟧ₑ w} {B = ⟦ [ φ ] ⟧ₑ w} {!p!} 
-        prove-Δ₁ {Δ₁} {x ∷ Δ₂} {φ} p = {! remove-specific-⟦⟧ₑ {Δ₁ ++ [ φ ]} {Δ₂} {x} {w} p!}
+        prove-Δ₁ {Δ₁} {[]} {φ} p = ∧ʰ-elim₂ (swap-formulas {Δ₁} p) 
+        prove-Δ₁ {Δ₁} {x ∷ Δ₂} {φ} p = {!!}
 
         prove-Δ₂ : {Δ₁ Δ₂ : Hypotheses} {φ : Formula} → proof (⟦ Δ₁ ++ φ ∷ Δ₂ ⟧ₑ w) → proof(⟦ Δ₂ ⟧ₑ w)
         prove-Δ₂ {[]} {Δ₂} {φ} p = ∧ʰ-elim₂ p
@@ -57,7 +60,6 @@ module Soundness (AtomicFormula : Set) where
           proof (⟦ □ φ ⟧ w) → w ≤ₖ w' → proof (⟦ φ ⟧ w')
     at-world {w = w} {w' = w'} {φ = φ} p w≤w' = ⇒ʰ-elim w≤w' (∀ʰ-elim p w')
 
-    -- to potem prestavi v drug file, kjer ima smisel
     □-monotonicity : {w w' : W} {φ : Formula} → proof (⟦ □ φ ⟧ w) → proof (w ≤ₕ w') → proof (⟦ □ φ ⟧ w')
     □-monotonicity p q = ∀ʰ-intro (λ w'' → ⇒ʰ-intro (λ r → ⇒ʰ-elim (≤-transitive q r) (∀ʰ-elim p w'')))
 
@@ -99,17 +101,11 @@ module Soundness (AtomicFormula : Set) where
 
     soundness {Δ = Δ} {φ = φ} (□-elim p) δ = at-world {φ = φ} (soundness p δ) ≤-refl
     soundness (◇-intro p) {w = w} δ = ∃ʰ-intro w (∧ʰ-intro ≤-refl (soundness p δ))
-    soundness (◇-elim {ψ = ψ} As f p q) {w = w} δ = {!!}         
+    soundness (◇-elim {φ = φ} {ψ = ψ} As f p q) {w = w} δ = soundness q  prove-□As-phi
+      where
+        prove-□As-phi : proof (⟦ box-map As ++ φ ∷ [] ⟧ₑ w)
+        prove-□As-phi = ⟦⟧ₑ-++ (box-map As) [ φ ] {w} {!!}
+          (∧ʰ-intro (∃ʰ-elim (⟦ φ ⟧ w) (λ w' e → {!!}) (soundness p δ)) ⊤ʰ-intro)
+        
 
-{-
-
-  δ         soundness p δ
-  w -------->    w'
-
-  Δ              φ
-                                        soundness q
-                 box-map As ++ [ φ ] -----------------> w''
-                                                        ψ
-
--}
  
