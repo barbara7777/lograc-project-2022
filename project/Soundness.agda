@@ -27,9 +27,14 @@ module Soundness (AtomicFormula : Set) where
 
     -- helpers
 
+    unravel-list : {Δ : Hypotheses} {φ : Formula} {w : W} → proof (⟦ Δ ++ φ ∷ [] ⟧ₑ w) → proof (⟦ Δ ⟧ₑ w ∧ʰ ⟦ φ ⟧ w)
+    unravel-list {Δ} {φ} {w} p = ∧ʰ-intro {!!} {!!}
+         
     swap-formulas : {Δ : Hypotheses} {φ : Formula} {w : W} → proof(⟦ Δ ++ φ ∷ [] ⟧ₑ w) → proof(⟦ φ ∷ Δ ⟧ₑ w)
-    swap-formulas {Δ} p = {!∧ʰ-elim₁ p!}
-
+    swap-formulas {Δ} {φ} {w} p = ∧ʰ-intro
+      (∧ʰ-elim₂ {⟦ Δ ⟧ₑ w} {⟦ φ ⟧ w} (unravel-list {Δ} p))
+      (∧ʰ-elim₁ {⟦ Δ ⟧ₑ w} {⟦ φ ⟧ w} (unravel-list {Δ} p)) 
+        
     concat-proofs-⟦⟧ₑ : (Δ : Hypotheses) {w : W} → (∀ φ → φ ∈ Δ → proof (⟦ φ ⟧ w)) → proof (⟦ Δ ⟧ₑ w)
     concat-proofs-⟦⟧ₑ [] f = ⊤ʰ-intro
     concat-proofs-⟦⟧ₑ (y ∷ Δ) {w = w} f = ∧ʰ-intro (f y ∈-here)
@@ -46,7 +51,7 @@ module Soundness (AtomicFormula : Set) where
       where
         prove-Δ₁ : {Δ₁ Δ₂ : Hypotheses} {φ : Formula} → proof (⟦ Δ₁ ++ φ ∷ Δ₂ ⟧ₑ w) → proof(⟦ Δ₁ ⟧ₑ w)
         prove-Δ₁ {Δ₁} {[]} {φ} p = ∧ʰ-elim₂ (swap-formulas {Δ₁} p) 
-        prove-Δ₁ {Δ₁} {x ∷ Δ₂} {φ} p = {!!}
+        prove-Δ₁ {Δ₁} {x ∷ Δ₂} {φ} p = remove-specific-⟦⟧ₑ {{!!}} {{!!}} {x} {w} {!!}
 
         prove-Δ₂ : {Δ₁ Δ₂ : Hypotheses} {φ : Formula} → proof (⟦ Δ₁ ++ φ ∷ Δ₂ ⟧ₑ w) → proof(⟦ Δ₂ ⟧ₑ w)
         prove-Δ₂ {[]} {Δ₂} {φ} p = ∧ʰ-elim₂ p
