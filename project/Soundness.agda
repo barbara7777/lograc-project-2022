@@ -27,8 +27,25 @@ module Soundness (AtomicFormula : Set) where
 
     -- helpers
 
+    ++-elim₁ : (Γ Δ : Hypotheses) → {w : W} → proof (⟦ Γ ++ Δ ⟧ₑ w) → proof(⟦ Γ ⟧ₑ w)
+    ++-elim₁ Γ Δ p = {!!}
+
+    ++-elim₂ : (Γ Δ : Hypotheses) → {w : W} → proof (⟦ Γ ++ Δ ⟧ₑ w) → proof(⟦ Δ ⟧ₑ w)
+    ++-elim₂ Γ Δ p = {!!}
+
+    ++-intro : (Γ Δ : Hypotheses) → {w : W}  → proof(⟦ Γ ⟧ₑ w) → proof(⟦ Δ ⟧ₑ w) → proof (⟦ Γ ++ Δ ⟧ₑ w)
+    ++-intro Γ Δ p q = {!!}
+
+    elim-last : {Δ : Hypotheses} {φ : Formula} {w : W} → proof (⟦ Δ ++ φ ∷ [] ⟧ₑ w) → proof (⟦ φ ⟧ w)
+    elim-last {[]} p = ∧ʰ-elim₁ p 
+    elim-last {_ ∷ Δ} p = elim-last {Δ} (∧ʰ-elim₂ p)
+
+    elim-but-last : {Δ : Hypotheses} {φ : Formula} {w : W} → proof (⟦ Δ ++ φ ∷ [] ⟧ₑ w) → proof (⟦ Δ ⟧ₑ w)
+    elim-but-last {[]} p = ⊤ʰ-intro
+    elim-but-last {ψ ∷ Δ} p = ∧ʰ-intro (∧ʰ-elim₁ p) (elim-but-last {Δ} (∧ʰ-elim₂ p))
+
     unravel-list : {Δ : Hypotheses} {φ : Formula} {w : W} → proof (⟦ Δ ++ φ ∷ [] ⟧ₑ w) → proof (⟦ Δ ⟧ₑ w ∧ʰ ⟦ φ ⟧ w)
-    unravel-list {Δ} {φ} {w} p = ∧ʰ-intro {!!} {!!}
+    unravel-list {Δ} {φ} {w} p = ∧ʰ-intro (elim-but-last {Δ} p) (elim-last {Δ} p)
          
     swap-formulas : {Δ : Hypotheses} {φ : Formula} {w : W} → proof(⟦ Δ ++ φ ∷ [] ⟧ₑ w) → proof(⟦ φ ∷ Δ ⟧ₑ w)
     swap-formulas {Δ} {φ} {w} p = ∧ʰ-intro
@@ -44,22 +61,28 @@ module Soundness (AtomicFormula : Set) where
     ⟦⟧ₑ-++ [] Δ₂ δ₁ δ₂ = δ₂
     ⟦⟧ₑ-++ (_ ∷ Δ₁) Δ₂ δ₁ δ₂ = ∧ʰ-intro (∧ʰ-elim₁ δ₁) (⟦⟧ₑ-++ Δ₁ Δ₂ (∧ʰ-elim₂ δ₁) δ₂)
 
+    -- remove-specific-⟦⟧ₑ : {Δ₁ Δ₂ : Hypotheses} {φ : Formula} {w : W}
+    --                       → proof (⟦ Δ₁ ++ φ ∷ Δ₂ ⟧ₑ w)
+    --                       → proof (⟦ Δ₁ ++ Δ₂ ⟧ₑ w)
+    -- remove-specific-⟦⟧ₑ {Δ₁} {Δ₂} {φ} {w} p = ⟦⟧ₑ-++ Δ₁ Δ₂ (prove-Δ₁ {Δ₁} {Δ₂} {φ} p) (prove-Δ₂ {Δ₁} {Δ₂} {φ} p)
+    --   where
+    --     prove-Δ₁ : {Δ₁ Δ₂ : Hypotheses} {φ : Formula} → proof (⟦ Δ₁ ++ φ ∷ Δ₂ ⟧ₑ w) → proof(⟦ Δ₁ ⟧ₑ w)
+    --     prove-Δ₁ {Δ₁} {[]} {φ} p = ∧ʰ-elim₂ (swap-formulas {Δ₁} p) 
+    --     prove-Δ₁ {Δ₁} {x ∷ Δ₂} {φ} p = prove-Δ₁ {Δ₁} {Δ₂} {φ} (remove-specific-⟦⟧ₑ p)
+
+    --     prove-Δ₂ : {Δ₁ Δ₂ : Hypotheses} {φ : Formula} → proof (⟦ Δ₁ ++ φ ∷ Δ₂ ⟧ₑ w) → proof(⟦ Δ₂ ⟧ₑ w)
+    --     prove-Δ₂ {[]} {Δ₂} {φ} p = ∧ʰ-elim₂ p
+    --     prove-Δ₂ {x ∷ Δ₁} {Δ₂} {φ} p = prove-Δ₂ {Δ₁} {Δ₂} {φ} (∧ʰ-elim₂ p)
+
+    --     prove-φ : {Δ₁ Δ₂ : Hypotheses} {φ : Formula} → proof (⟦ Δ₁ ++ φ ∷ Δ₂ ⟧ₑ w) → proof(⟦ φ ⟧ w)
+    --     prove-φ {[]} {Δ₂} {φ} p = ∧ʰ-elim₁ p
+    --     prove-φ {x ∷ Δ₁} {Δ₂} {φ} p = prove-φ {Δ₁} {Δ₂} {φ} (∧ʰ-elim₂ p)
+
     remove-specific-⟦⟧ₑ : {Δ₁ Δ₂ : Hypotheses} {φ : Formula} {w : W}
                           → proof (⟦ Δ₁ ++ φ ∷ Δ₂ ⟧ₑ w)
                           → proof (⟦ Δ₁ ++ Δ₂ ⟧ₑ w)
-    remove-specific-⟦⟧ₑ {Δ₁} {Δ₂} {φ} {w} p = ⟦⟧ₑ-++ Δ₁ Δ₂ (prove-Δ₁ {Δ₁} {Δ₂} {φ} p) (prove-Δ₂ {Δ₁} {Δ₂} {φ} p)
-      where
-        prove-Δ₁ : {Δ₁ Δ₂ : Hypotheses} {φ : Formula} → proof (⟦ Δ₁ ++ φ ∷ Δ₂ ⟧ₑ w) → proof(⟦ Δ₁ ⟧ₑ w)
-        prove-Δ₁ {Δ₁} {[]} {φ} p = ∧ʰ-elim₂ (swap-formulas {Δ₁} p) 
-        prove-Δ₁ {Δ₁} {x ∷ Δ₂} {φ} p = remove-specific-⟦⟧ₑ {{!!}} {{!!}} {x} {w} {!!}
-
-        prove-Δ₂ : {Δ₁ Δ₂ : Hypotheses} {φ : Formula} → proof (⟦ Δ₁ ++ φ ∷ Δ₂ ⟧ₑ w) → proof(⟦ Δ₂ ⟧ₑ w)
-        prove-Δ₂ {[]} {Δ₂} {φ} p = ∧ʰ-elim₂ p
-        prove-Δ₂ {x ∷ Δ₁} {Δ₂} {φ} p = prove-Δ₂ {Δ₁} {Δ₂} {φ} (∧ʰ-elim₂ p)
-
-        prove-φ : {Δ₁ Δ₂ : Hypotheses} {φ : Formula} → proof (⟦ Δ₁ ++ φ ∷ Δ₂ ⟧ₑ w) → proof(⟦ φ ⟧ w)
-        prove-φ {[]} {Δ₂} {φ} p = ∧ʰ-elim₁ p
-        prove-φ {x ∷ Δ₁} {Δ₂} {φ} p = prove-φ {Δ₁} {Δ₂} {φ} (∧ʰ-elim₂ p)
+    remove-specific-⟦⟧ₑ {[]} {Δ₂} {φ} {w} p = {!!}
+    remove-specific-⟦⟧ₑ {ψ ∷ Δ₁} {Δ₂} {φ} {w} p = {!!}
 
     at-world : {w w' : W} {φ : Formula} →
           proof (⟦ □ φ ⟧ w) → w ≤ₖ w' → proof (⟦ φ ⟧ w')
@@ -79,7 +102,9 @@ module Soundness (AtomicFormula : Set) where
 
     soundness {Δ = Δ} {φ = φ₁} (weaken {Δ₁} {Δ₂} φ p) {w = w} δ = soundness p {w = w}
       (remove-specific-⟦⟧ₑ {Δ₁} {Δ₂} {φ} δ)
-    soundness {Δ = Δ} (contract {Δ₁} {Δ₂} φ {ψ} d) {w = w} δ = soundness d {w = w} {!!} 
+    soundness {Δ = Δ} (contract {Δ₁} {Δ₂} φ {ψ} d) {w = w} δ = soundness d
+              (++-intro Δ₁ (φ ∷ φ ∷ Δ₂) (++-elim₁ Δ₁ (φ ∷ Δ₂) δ)
+                (∧ʰ-intro (∧ʰ-elim₁ (++-elim₂ Δ₁ (φ ∷ Δ₂) δ)) (++-elim₂ Δ₁ (φ ∷ Δ₂) δ))) 
     soundness (exchange φ₁ φ₂ p) = {!!}
 
     soundness (hyp {φ ∷ Δ} φ {{ ∈-here }}) = ∧ʰ-elim₁
@@ -106,10 +131,21 @@ module Soundness (AtomicFormula : Set) where
 
     soundness {Δ = Δ} {φ = φ} (□-elim p) δ = at-world {φ = φ} (soundness p δ) ≤-refl
     soundness (◇-intro p) {w = w} δ = ∃ʰ-intro w (∧ʰ-intro ≤-refl (soundness p δ))
-    soundness (◇-elim {φ = φ} {ψ = ψ} As f p q) {w = w} δ = soundness q  prove-□As-phi
+    soundness (◇-elim {φ = φ} {ψ = ψ} As f p q) {w = w} δ =
+      ∃ʰ-elim
+        (∃ʰ W (λ w'' → (w ≤ₕ w'') ∧ʰ ⟦ ψ ⟧ w''))
+        (λ w' r →
+           ∃ʰ-elim
+            (∃ʰ W (λ w'' → (w ≤ₕ w'') ∧ʰ ⟦ ψ ⟧ w''))
+            (λ w'' s →  ∃ʰ-intro w'' (∧ʰ-intro {!!} {!!}) )
+            (soundness q {w = w'} (++-intro (box-map As) [ φ ] {!!} {!!})) )
+        (soundness p δ)
       where
+        w' : W
+        w' = {!!}
+
         prove-□As-phi : proof (⟦ box-map As ++ φ ∷ [] ⟧ₑ w)
-        prove-□As-phi = ⟦⟧ₑ-++ (box-map As) [ φ ] {w} {!!}
+        prove-□As-phi = ⟦⟧ₑ-++ (box-map As) [ φ ] {w} {!soundness f δ!}
           (∧ʰ-intro (∃ʰ-elim (⟦ φ ⟧ w) (λ w' e → {!!}) (soundness p δ)) ⊤ʰ-intro)
         
 
