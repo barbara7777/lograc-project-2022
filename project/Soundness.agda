@@ -43,25 +43,21 @@ module Soundness (AtomicFormula : Set) where
     prove-Δ₂ [] Δ₂ φ p = ∧ʰ-elim₂ p
     prove-Δ₂ (_ ∷ Δ₁) Δ₂ φ p = prove-Δ₂ Δ₁ Δ₂ φ (∧ʰ-elim₂ p)
 
-    proof-exchange : (Γ Δ : Hypotheses) (φ ψ : Formula) {w : W}
-                     → proof ( ⟦ Γ ++ φ ∷ ψ ∷ Δ ⟧ₑ w )
-                     → proof ( ⟦ Γ ++ ψ ∷ φ ∷ Δ ⟧ₑ w )
-    proof-exchange [] Δ φ ψ p =
-                   ∧ʰ-intro
-                     (∧ʰ-elim₁ (∧ʰ-elim₂ p))
-                     (∧ʰ-intro (∧ʰ-elim₁ p) (∧ʰ-elim₂ (∧ʰ-elim₂ p)))
+    proof-exchange : (Γ Δ : Hypotheses) (φ ψ : Formula) {w : W} → proof ( ⟦ Γ ++ φ ∷ ψ ∷ Δ ⟧ₑ w ) → proof ( ⟦ Γ ++ ψ ∷ φ ∷ Δ ⟧ₑ w )
+    proof-exchange [] Δ φ ψ p = ∧ʰ-intro (∧ʰ-elim₁ (∧ʰ-elim₂ p)) (∧ʰ-intro (∧ʰ-elim₁ p) (∧ʰ-elim₂ (∧ʰ-elim₂ p)))
     proof-exchange (x ∷ Γ) Δ φ ψ p = ∧ʰ-intro (∧ʰ-elim₁ p) (proof-exchange Γ Δ φ ψ (∧ʰ-elim₂ p))
 
-    at-world : {w w' : W} {φ : Formula} →
-          proof (⟦ □ φ ⟧ w) → w ≤ₖ w' → proof (⟦ φ ⟧ w')
+    at-world : {w w' : W} {φ : Formula} → proof (⟦ □ φ ⟧ w) → w ≤ₖ w' → proof (⟦ φ ⟧ w')
     at-world {w = w} {w' = w'} {φ = φ} p w≤w' = ⇒ʰ-elim w≤w' (∀ʰ-elim p w')
 
     □-monotonicity : {w w' : W} {φ : Formula} → proof (⟦ □ φ ⟧ w) → proof (w ≤ₕ w') → proof (⟦ □ φ ⟧ w')
     □-monotonicity p q = ∀ʰ-intro (λ w'' → ⇒ʰ-intro (λ r → ⇒ʰ-elim (≤-transitive q r) (∀ʰ-elim p w'')))
 
-    box-∧-map-to-box-map : {As : List Formula} {w w' : W} → w ≤ₖ w' → proof (⟦ box-∧-map As ⟧ w') → proof (⟦ box-map As ⟧ₑ w')
-    box-∧-map-to-box-map {[]} w≤w' p = p
-    box-∧-map-to-box-map {φ ∷ φs} w≤w' p = ∧ʰ-intro (∧ʰ-elim₁ p) (box-∧-map-to-box-map {φs} w≤w' (∧ʰ-elim₂ p))
+    □-map-monotonicity : {w w' : W} → (As : List Formula) → (w≤w' : w ≤ₖ w') → (proof (⟦ box-∧-map As ⟧ w)) → (proof (⟦ box-map As ⟧ₑ w'))
+    □-map-monotonicity [] w≤w' p = p
+    □-map-monotonicity {w} {w' = w'} (φ ∷ φs) w≤w' p = ∧ʰ-intro 
+        (□-monotonicity {w = w} {φ = φ} (∧ʰ-elim₁ p) w≤w') 
+        (□-map-monotonicity φs w≤w' ((∧ʰ-elim₂ p)))
 
     -- soundness
 
@@ -96,13 +92,7 @@ module Soundness (AtomicFormula : Set) where
          (⇒ʰ-intro (λ q → soundness p₂ (++-intro Δ _ δ (∧ʰ-intro q ⊤ʰ-intro))))
     soundness {Δ = Δ} (⇒-intro {Δ} {φ} {ψ} p) {w = w} δ =  ⇒ʰ-intro (λ x → soundness p (++-intro Δ [ φ ] δ (∧ʰ-intro x ⊤ʰ-intro))) 
     soundness (⇒-elim p p₁) = λ x → ⇒ʰ-elim (soundness p₁ x) (soundness p x)
-    soundness (□-intro As q p) {w = w} δ = ∀ʰ-intro (λ w' → 
-      ⇒ʰ-intro λ w≤w' → soundness p (aux As w≤w' (soundness q δ)))
-        where
-          aux : {w' : W} → (As : List Formula) → (w≤w' : w ≤ₖ w') → (proof (⟦ box-∧-map As ⟧ w)) → (proof (⟦ box-map As ⟧ₑ w'))
-          aux [] w≤w' p = p
-          aux {w' = w'} (φ ∷ φs) w≤w' p =  ∧ʰ-intro (□-monotonicity {w = w} {φ = φ} (∧ʰ-elim₁ p) w≤w') (aux φs w≤w' ((∧ʰ-elim₂ p)))
-
+    soundness (□-intro As q p) {w = w} δ = ∀ʰ-intro (λ w' → ⇒ʰ-intro λ w≤w' → soundness p (□-map-monotonicity As w≤w' (soundness q δ)))
     soundness {Δ = Δ} {φ = φ} (□-elim p) δ = at-world {φ = φ} (soundness p δ) ≤-refl
     soundness (◇-intro p) {w = w} δ = ∃ʰ-intro w (∧ʰ-intro ≤-refl (soundness p δ))
     soundness (◇-elim {φ = φ} {ψ = ψ} As f p q) {w = w} δ =
@@ -112,15 +102,9 @@ module Soundness (AtomicFormula : Set) where
            ∃ʰ-elim
             (∃ʰ W (λ w'' → (w ≤ₕ w'') ∧ʰ ⟦ ψ ⟧ w''))
             (λ w'' s →  ∃ʰ-intro w'' (∧ʰ-intro (prove-w≤w'' (∧ʰ-elim₁ r) (∧ʰ-elim₁ s)) (∧ʰ-elim₂ s)))
-         {-    (soundness q {w = w'} (++-intro (box-map As) [ φ ] (((box-∧-map-to-box-map {As} {} {!   !} {! (soundness f δ) !}))) -}
-            (soundness q {w = w'} (++-intro (box-map As) [ φ ] ((aux As (∧ʰ-elim₁ r) (soundness f δ)))
+            (soundness q {w = w'} (++-intro (box-map As) [ φ ] ((□-map-monotonicity {w} {w'} As (∧ʰ-elim₁ r) (soundness f δ)))
               (∧ʰ-intro (∧ʰ-elim₂ r) ⊤ʰ-intro))))
         (soundness p δ)
       where
         prove-w≤w'' : {w w' w'' : W} → proof (w ≤ₕ w') → proof (w' ≤ₕ w'') → proof (w ≤ₕ w'')
         prove-w≤w'' p q = ≤-transitive p q
-
-        aux : {w' : W} → (As : List Formula) → (w≤w' : w ≤ₖ w') → (proof (⟦ box-∧-map As ⟧ w)) → (proof (⟦ box-map As ⟧ₑ w'))
-        aux [] w≤w' p = p
-        aux {w' = w'} (φ ∷ φs) w≤w' p =  ∧ʰ-intro (□-monotonicity {w = w} {φ = φ} (∧ʰ-elim₁ p) w≤w') (aux φs w≤w' ((∧ʰ-elim₂ p)))
-        
