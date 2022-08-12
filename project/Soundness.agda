@@ -59,6 +59,10 @@ module Soundness (AtomicFormula : Set) where
     □-monotonicity : {w w' : W} {φ : Formula} → proof (⟦ □ φ ⟧ w) → proof (w ≤ₕ w') → proof (⟦ □ φ ⟧ w')
     □-monotonicity p q = ∀ʰ-intro (λ w'' → ⇒ʰ-intro (λ r → ⇒ʰ-elim (≤-transitive q r) (∀ʰ-elim p w'')))
 
+    box-∧-map-to-box-map : {As : List Formula} {w w' : W} → w ≤ₖ w' → proof (⟦ box-∧-map As ⟧ w') → proof (⟦ box-map As ⟧ₑ w')
+    box-∧-map-to-box-map {[]} w≤w' p = p
+    box-∧-map-to-box-map {φ ∷ φs} w≤w' p = ∧ʰ-intro (∧ʰ-elim₁ p) (box-∧-map-to-box-map {φs} w≤w' (∧ʰ-elim₂ p))
+
     -- soundness
 
     soundness : {Δ : Hypotheses}
@@ -107,13 +111,16 @@ module Soundness (AtomicFormula : Set) where
         (λ w' r →
            ∃ʰ-elim
             (∃ʰ W (λ w'' → (w ≤ₕ w'') ∧ʰ ⟦ ψ ⟧ w''))
-            (λ w'' s →  ∃ʰ-intro w'' (∧ʰ-intro (prove-w≤w'' (∧ʰ-elim₁ r) (∧ʰ-elim₁ s)) (∧ʰ-elim₂ s)) )
-            (soundness q {w = w'} (++-intro (box-map As) [ φ ] {!soundness f δ!}
-              (∧ʰ-intro (∧ʰ-elim₂ r) ⊤ʰ-intro))) )
+            (λ w'' s →  ∃ʰ-intro w'' (∧ʰ-intro (prove-w≤w'' (∧ʰ-elim₁ r) (∧ʰ-elim₁ s)) (∧ʰ-elim₂ s)))
+         {-    (soundness q {w = w'} (++-intro (box-map As) [ φ ] (((box-∧-map-to-box-map {As} {} {!   !} {! (soundness f δ) !}))) -}
+            (soundness q {w = w'} (++-intro (box-map As) [ φ ] ((aux As (∧ʰ-elim₁ r) (soundness f δ)))
+              (∧ʰ-intro (∧ʰ-elim₂ r) ⊤ʰ-intro))))
         (soundness p δ)
       where
         prove-w≤w'' : {w w' w'' : W} → proof (w ≤ₕ w') → proof (w' ≤ₕ w'') → proof (w ≤ₕ w'')
         prove-w≤w'' p q = ≤-transitive p q
-        
 
- 
+        aux : {w' : W} → (As : List Formula) → (w≤w' : w ≤ₖ w') → (proof (⟦ box-∧-map As ⟧ w)) → (proof (⟦ box-map As ⟧ₑ w'))
+        aux [] w≤w' p = p
+        aux {w' = w'} (φ ∷ φs) w≤w' p =  ∧ʰ-intro (□-monotonicity {w = w} {φ = φ} (∧ʰ-elim₁ p) w≤w') (aux φs w≤w' ((∧ʰ-elim₂ p)))
+        
